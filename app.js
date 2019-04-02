@@ -3,6 +3,7 @@ class App extends React.Component {
         super(props);
         this.divRef = React.createRef();
         this.state = {
+            gameOver: false,
             userWidth: 25,
             userHeight: 25,
             userMovementDistance: 5,
@@ -46,29 +47,32 @@ class App extends React.Component {
                         eyePosition={this.state.eyePosition}
                     />
                 </div>
+                <div id="modalContainer" />
             </div>
         );
     }
 
     movePlayer(event) {
-        if (event.keyCode == 37) {
-            this.state.eyePosition = "left";
-            if (this.state.userLocationX >= 5) {
-                this.setState({
-                    userLocationX: (this.state.userLocationX -= this.state.userMovementDistance)
-                });
-            }
-        } else if (event.keyCode == 39) {
-            this.state.eyePosition = "right";
-            if (
-                this.state.userLocationX <=
-                this.state.playAreaWidth -
-                    this.state.userWidth -
-                    this.state.userMovementDistance
-            ) {
-                this.setState({
-                    userLocationX: (this.state.userLocationX += this.state.userMovementDistance)
-                });
+        if (!this.state.gameOver) {
+            if (event.keyCode == 37) {
+                this.state.eyePosition = "left";
+                if (this.state.userLocationX >= 5) {
+                    this.setState({
+                        userLocationX: (this.state.userLocationX -= this.state.userMovementDistance)
+                    });
+                }
+            } else if (event.keyCode == 39) {
+                this.state.eyePosition = "right";
+                if (
+                    this.state.userLocationX <=
+                    this.state.playAreaWidth -
+                        this.state.userWidth -
+                        this.state.userMovementDistance
+                ) {
+                    this.setState({
+                        userLocationX: (this.state.userLocationX += this.state.userMovementDistance)
+                    });
+                }
             }
         }
     }
@@ -158,6 +162,13 @@ class App extends React.Component {
                     drop.x + 5 >= this.state.userLocationX &&
                     drop.x <= this.state.userLocationX + this.state.userWidth
                 ) {
+                    // ReactDOM.render(
+                    //     <Modal />,
+                    //     document.getElementById("modalContainer")
+                    // );
+                    this.setState({
+                        gameOver: true
+                    });
                     this.resetTotalState();
                 }
             }
@@ -169,15 +180,18 @@ class App extends React.Component {
             this.generateRainDrops();
         }
         this.checkForGameOver();
-        if (this.state.rainDrops[0].y > this.state.playAreaHeight - 20) {
-            this.resetRainDrops();
+        if (!this.state.gameOver) {
+            if (this.state.rainDrops[0].y > this.state.playAreaHeight - 20) {
+                this.resetRainDrops();
+            }
+            this.addPoints();
+            this.dropRain();
         }
-        this.addPoints();
-        this.dropRain();
     }
 
     resetTotalState() {
         this.setState({
+            gameOver: false,
             userWidth: 25,
             userHeight: 25,
             userMovementDistance: 5,
@@ -217,6 +231,16 @@ class RainDrop extends React.Component {
             top: this.props.y + "px"
         };
         return <div style={rainDropStyle} className="rainDrop" />;
+    }
+}
+
+class Modal extends React.Component {
+    render() {
+        return (
+            <div id="gameModal">
+                <p>My Modal</p>
+            </div>
+        );
     }
 }
 
