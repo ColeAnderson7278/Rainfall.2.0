@@ -47,23 +47,38 @@ class PlayArea extends React.Component {
             rainDrops: _.concat(
                 this.state.rainDrops,
                 {
-                    x: Math.floor(Math.random() * this.state.playAreaWidth - 5),
+                    x:
+                        Math.floor(
+                            Math.random() * this.state.playAreaWidth - 5
+                        ) + 5,
                     y: 0
                 },
                 {
-                    x: Math.floor(Math.random() * this.state.playAreaWidth - 5),
+                    x:
+                        Math.floor(
+                            Math.random() * this.state.playAreaWidth - 5
+                        ) + 5,
                     y: 0
                 },
                 {
-                    x: Math.floor(Math.random() * this.state.playAreaWidth - 5),
+                    x:
+                        Math.floor(
+                            Math.random() * this.state.playAreaWidth - 5
+                        ) + 5,
                     y: 0
                 },
                 {
-                    x: Math.floor(Math.random() * this.state.playAreaWidth - 5),
+                    x:
+                        Math.floor(
+                            Math.random() * this.state.playAreaWidth - 5
+                        ) + 5,
                     y: 0
                 },
                 {
-                    x: Math.floor(Math.random() * this.state.playAreaWidth - 5),
+                    x:
+                        Math.floor(
+                            Math.random() * this.state.playAreaWidth - 5
+                        ) + 5,
                     y: 0
                 }
             )
@@ -93,14 +108,33 @@ class PlayArea extends React.Component {
         });
     }
 
+    isGameOver() {
+        if (
+            this.state.rainDrops[0].y >=
+            this.state.playAreaHeight - (this.state.userHeight + 15)
+        ) {
+            for (var drop of this.state.rainDrops) {
+                if (
+                    drop.x + 5 >= this.state.userLocationX &&
+                    drop.x <= this.state.userLocationX + this.state.userWidth
+                ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     tick() {
         if (this.state.rainDrops.length == 0) {
             this.generateRainDrops();
         }
-        if (this.state.rainDrops[0].y > this.state.playAreaHeight - 20) {
-            this.resetRainDrops();
+        if (!this.isGameOver()) {
+            if (this.state.rainDrops[0].y > this.state.playAreaHeight - 20) {
+                this.resetRainDrops();
+            }
+            this.dropRain();
         }
-        this.dropRain();
     }
 
     render() {
