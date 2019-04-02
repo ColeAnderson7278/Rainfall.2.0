@@ -1,22 +1,30 @@
-#playAreaContainer {
+#appContainer {
     margin-left: auto;
     margin-right: auto;
+    display: flex;
+}
+
+#appContainer:hover,
+#appContainer:active,
+#appContainer:focus {
+    outline: 2px solid darkorange;
+}
+
+/* #scoreArea {
+    margin-left: 10px;
+    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+        "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+    z-index: 1;
+} */
+
+#userArea {
+    height: 100%;
+    width: 100%;
     display: flex;
     background-color: wheat;
     border: 3px double gold;
     border-radius: 3px;
     position: relative;
-}
-
-#playAreaContainer:hover,
-#playAreaContainer:active,
-#playAreaContainer:focus {
-    outline: 2px solid darkorange;
-}
-
-#userArea {
-    height: 100%;
-    width: 100%;
 }
 
 #userIcon {

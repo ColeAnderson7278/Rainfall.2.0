@@ -1,4 +1,4 @@
-class PlayArea extends React.Component {
+class App extends React.Component {
     constructor(props) {
         super(props);
         this.divRef = React.createRef();
@@ -12,7 +12,7 @@ class PlayArea extends React.Component {
             eyePosition: "left",
             rainDrops: []
         };
-        this.dropTick = setInterval(() => this.tick(), 50);
+        this.dropTick = setInterval(() => this.tick(), 30);
     }
 
     componentDidMount() {
@@ -49,35 +49,35 @@ class PlayArea extends React.Component {
                 {
                     x:
                         Math.floor(
-                            Math.random() * this.state.playAreaWidth - 5
+                            Math.random() * this.state.playAreaWidth - 10
                         ) + 5,
                     y: 0
                 },
                 {
                     x:
                         Math.floor(
-                            Math.random() * this.state.playAreaWidth - 5
+                            Math.random() * this.state.playAreaWidth - 10
                         ) + 5,
                     y: 0
                 },
                 {
                     x:
                         Math.floor(
-                            Math.random() * this.state.playAreaWidth - 5
+                            Math.random() * this.state.playAreaWidth - 10
                         ) + 5,
                     y: 0
                 },
                 {
                     x:
                         Math.floor(
-                            Math.random() * this.state.playAreaWidth - 5
+                            Math.random() * this.state.playAreaWidth - 10
                         ) + 5,
                     y: 0
                 },
                 {
                     x:
                         Math.floor(
-                            Math.random() * this.state.playAreaWidth - 5
+                            Math.random() * this.state.playAreaWidth - 10
                         ) + 5,
                     y: 0
                 }
@@ -89,7 +89,9 @@ class PlayArea extends React.Component {
         var resetDrops = [];
         for (var drop of this.state.rainDrops) {
             resetDrops.push({
-                x: Math.floor(Math.random() * this.state.playAreaWidth - 5),
+                x:
+                    Math.floor(Math.random() * this.state.playAreaWidth - 10) +
+                    5,
                 y: 0
             });
         }
@@ -107,6 +109,12 @@ class PlayArea extends React.Component {
             rainDrops: updatedDrops
         });
     }
+
+    // addPoints(){
+    //     this.setState({
+    //         userScore:
+    //     })
+    // }
 
     checkForGameOver() {
         if (
@@ -156,21 +164,25 @@ class PlayArea extends React.Component {
         return (
             <div
                 ref={this.divRef}
-                id="playAreaContainer"
-                style={playAreaStyle}
+                id="appContainer"
+                // style={playAreaStyle}
                 tabIndex="0"
                 onKeyDown={event => this.movePlayer(event)}
             >
-                {this.state.rainDrops.map((drop, key) => (
-                    <RainDrop key={key} x={drop.x} y={drop.y} />
-                ))}
-                <div id="userArea">
+                <div style={playAreaStyle} id="userArea">
+                    {this.state.rainDrops.map((drop, key) => (
+                        <RainDrop key={key} x={drop.x} y={drop.y} />
+                    ))}
                     <User
                         position={this.state.userLocationX}
                         height={this.state.userHeight}
                         width={this.state.userWidth}
                         eyePosition={this.state.eyePosition}
                     />
+                </div>
+                <div id="scoreArea">
+                    <p>Your Score:</p>
+                    {/* <p>{this.state.userScore}</p> */}
                 </div>
             </div>
         );
@@ -206,4 +218,4 @@ class RainDrop extends React.Component {
     }
 }
 
-ReactDOM.render(<PlayArea />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById("root"));
