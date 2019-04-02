@@ -108,7 +108,7 @@ class PlayArea extends React.Component {
         });
     }
 
-    isGameOver() {
+    checkForGameOver() {
         if (
             this.state.rainDrops[0].y >=
             this.state.playAreaHeight - (this.state.userHeight + 15)
@@ -118,23 +118,34 @@ class PlayArea extends React.Component {
                     drop.x + 5 >= this.state.userLocationX &&
                     drop.x <= this.state.userLocationX + this.state.userWidth
                 ) {
-                    return true;
+                    this.resetTotalState();
                 }
             }
         }
-        return false;
     }
 
     tick() {
         if (this.state.rainDrops.length == 0) {
             this.generateRainDrops();
         }
-        if (!this.isGameOver()) {
-            if (this.state.rainDrops[0].y > this.state.playAreaHeight - 20) {
-                this.resetRainDrops();
-            }
-            this.dropRain();
+        this.checkForGameOver();
+        if (this.state.rainDrops[0].y > this.state.playAreaHeight - 20) {
+            this.resetRainDrops();
         }
+        this.dropRain();
+    }
+
+    resetTotalState() {
+        this.setState({
+            userWidth: 25,
+            userHeight: 25,
+            userMovementDistance: 5,
+            playAreaWidth: 300,
+            playAreaHeight: 300,
+            userLocationX: 140,
+            eyePosition: "left",
+            rainDrops: []
+        });
     }
 
     render() {
