@@ -8,9 +8,11 @@ class PlayArea extends React.Component {
             userMovementDistance: 5,
             playAreaWidth: 300,
             playAreaHeight: 300,
-            userLocationX: 0,
-            eyePosition: "left"
+            userLocationX: 140,
+            eyePosition: "left",
+            rainDrops: []
         };
+        this.dropTick = setInterval(() => this.tick(), 50);
     }
 
     componentDidMount() {
@@ -40,6 +42,67 @@ class PlayArea extends React.Component {
         }
     }
 
+    generateRainDrops() {
+        this.setState({
+            rainDrops: _.concat(
+                this.state.rainDrops,
+                {
+                    x: Math.floor(Math.random() * this.state.playAreaWidth - 5),
+                    y: 0
+                },
+                {
+                    x: Math.floor(Math.random() * this.state.playAreaWidth - 5),
+                    y: 0
+                },
+                {
+                    x: Math.floor(Math.random() * this.state.playAreaWidth - 5),
+                    y: 0
+                },
+                {
+                    x: Math.floor(Math.random() * this.state.playAreaWidth - 5),
+                    y: 0
+                },
+                {
+                    x: Math.floor(Math.random() * this.state.playAreaWidth - 5),
+                    y: 0
+                }
+            )
+        });
+    }
+
+    resetRainDrops() {
+        var resetDrops = [];
+        for (var drop of this.state.rainDrops) {
+            resetDrops.push({
+                x: Math.floor(Math.random() * this.state.playAreaWidth - 5),
+                y: 0
+            });
+        }
+        this.setState({
+            rainDrops: resetDrops
+        });
+    }
+
+    dropRain() {
+        var updatedDrops = [];
+        for (var drop of this.state.rainDrops) {
+            updatedDrops.push({ x: drop.x, y: (drop.y += 5) });
+        }
+        this.setState({
+            rainDrops: updatedDrops
+        });
+    }
+
+    tick() {
+        if (this.state.rainDrops.length == 0) {
+            this.generateRainDrops();
+        }
+        if (this.state.rainDrops[0].y > this.state.playAreaHeight - 20) {
+            this.resetRainDrops();
+        }
+        this.dropRain();
+    }
+
     render() {
         var playAreaStyle = {
             width: this.state.playAreaWidth + "px",
@@ -53,6 +116,9 @@ class PlayArea extends React.Component {
                 tabIndex="0"
                 onKeyDown={event => this.movePlayer(event)}
             >
+                {this.state.rainDrops.map((drop, key) => (
+                    <RainDrop key={key} x={drop.x} y={drop.y} />
+                ))}
                 <div id="userArea">
                     <User
                         position={this.state.userLocationX}
@@ -82,6 +148,16 @@ class User extends React.Component {
                 <div style={userInsideStyle} id="userEye" />
             </div>
         );
+    }
+}
+
+class RainDrop extends React.Component {
+    render() {
+        var rainDropStyle = {
+            left: this.props.x + "px",
+            top: this.props.y + "px"
+        };
+        return <div style={rainDropStyle} className="rainDrop" />;
     }
 }
 
