@@ -10,13 +10,44 @@ class App extends React.Component {
             playAreaHeight: 300,
             userLocationX: 140,
             eyePosition: "left",
-            rainDrops: []
+            rainDrops: [],
+            userScore: 0
         };
         this.dropTick = setInterval(() => this.tick(), 30);
     }
 
     componentDidMount() {
         this.divRef.current.focus();
+    }
+
+    render() {
+        var userAreaStyle = {
+            width: this.state.playAreaWidth + "px",
+            height: this.state.playAreaHeight + "px"
+        };
+        return (
+            <div
+                ref={this.divRef}
+                id="appContainer"
+                tabIndex="0"
+                onKeyDown={event => this.movePlayer(event)}
+            >
+                <div id="scoreArea">
+                    <p>Your Score: {this.state.userScore}</p>
+                </div>
+                <div style={userAreaStyle} id="userArea">
+                    {this.state.rainDrops.map((drop, key) => (
+                        <RainDrop key={key} x={drop.x} y={drop.y} />
+                    ))}
+                    <User
+                        position={this.state.userLocationX}
+                        height={this.state.userHeight}
+                        width={this.state.userWidth}
+                        eyePosition={this.state.eyePosition}
+                    />
+                </div>
+            </div>
+        );
     }
 
     movePlayer(event) {
@@ -110,11 +141,12 @@ class App extends React.Component {
         });
     }
 
-    // addPoints(){
-    //     this.setState({
-    //         userScore:
-    //     })
-    // }
+    addPoints() {
+        var originalScore = this.state.userScore;
+        this.setState({
+            userScore: originalScore + 5
+        });
+    }
 
     checkForGameOver() {
         if (
@@ -140,6 +172,7 @@ class App extends React.Component {
         if (this.state.rainDrops[0].y > this.state.playAreaHeight - 20) {
             this.resetRainDrops();
         }
+        this.addPoints();
         this.dropRain();
     }
 
@@ -152,40 +185,9 @@ class App extends React.Component {
             playAreaHeight: 300,
             userLocationX: 140,
             eyePosition: "left",
-            rainDrops: []
+            rainDrops: [],
+            userScore: 0
         });
-    }
-
-    render() {
-        var playAreaStyle = {
-            width: this.state.playAreaWidth + "px",
-            height: this.state.playAreaHeight + "px"
-        };
-        return (
-            <div
-                ref={this.divRef}
-                id="appContainer"
-                // style={playAreaStyle}
-                tabIndex="0"
-                onKeyDown={event => this.movePlayer(event)}
-            >
-                <div style={playAreaStyle} id="userArea">
-                    {this.state.rainDrops.map((drop, key) => (
-                        <RainDrop key={key} x={drop.x} y={drop.y} />
-                    ))}
-                    <User
-                        position={this.state.userLocationX}
-                        height={this.state.userHeight}
-                        width={this.state.userWidth}
-                        eyePosition={this.state.eyePosition}
-                    />
-                </div>
-                <div id="scoreArea">
-                    <p>Your Score:</p>
-                    {/* <p>{this.state.userScore}</p> */}
-                </div>
-            </div>
-        );
     }
 }
 
