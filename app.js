@@ -31,7 +31,9 @@ class App extends React.Component {
                 ref={this.divRef}
                 id="appContainer"
                 tabIndex="0"
-                onKeyDown={event => this.movePlayer(event)}
+                onKeyDown={event => (
+                    this.movePlayer(event), this.restartGame(event)
+                )}
             >
                 <div id="scoreArea">
                     <p>Your Score: {this.state.userScore}</p>
@@ -46,10 +48,18 @@ class App extends React.Component {
                         width={this.state.userWidth}
                         eyePosition={this.state.eyePosition}
                     />
+                    <div id="modalContainer" />
                 </div>
-                <div id="modalContainer" />
             </div>
         );
+    }
+
+    restartGame(event) {
+        if (this.state.gameOver) {
+            if (event.keyCode == 13) {
+                this.resetTotalState();
+            }
+        }
     }
 
     movePlayer(event) {
@@ -85,35 +95,35 @@ class App extends React.Component {
                     x:
                         Math.floor(
                             Math.random() * this.state.playAreaWidth - 10
-                        ) + 5,
+                        ) + 10,
                     y: 0
                 },
                 {
                     x:
                         Math.floor(
                             Math.random() * this.state.playAreaWidth - 10
-                        ) + 5,
+                        ) + 10,
                     y: 0
                 },
                 {
                     x:
                         Math.floor(
                             Math.random() * this.state.playAreaWidth - 10
-                        ) + 5,
+                        ) + 10,
                     y: 0
                 },
                 {
                     x:
                         Math.floor(
                             Math.random() * this.state.playAreaWidth - 10
-                        ) + 5,
+                        ) + 10,
                     y: 0
                 },
                 {
                     x:
                         Math.floor(
                             Math.random() * this.state.playAreaWidth - 10
-                        ) + 5,
+                        ) + 10,
                     y: 0
                 }
             )
@@ -126,7 +136,7 @@ class App extends React.Component {
             resetDrops.push({
                 x:
                     Math.floor(Math.random() * this.state.playAreaWidth - 10) +
-                    5,
+                    10,
                 y: 0
             });
         }
@@ -162,14 +172,14 @@ class App extends React.Component {
                     drop.x + 5 >= this.state.userLocationX &&
                     drop.x <= this.state.userLocationX + this.state.userWidth
                 ) {
-                    // ReactDOM.render(
-                    //     <Modal />,
-                    //     document.getElementById("modalContainer")
-                    // );
+                    ReactDOM.render(
+                        <Modal />,
+                        document.getElementById("modalContainer")
+                    );
                     this.setState({
                         gameOver: true
                     });
-                    this.resetTotalState();
+                    // this.resetTotalState();
                 }
             }
         }
@@ -238,7 +248,7 @@ class Modal extends React.Component {
     render() {
         return (
             <div id="gameModal">
-                <p>My Modal</p>
+                <p id="modalText">Game Over</p>
             </div>
         );
     }
