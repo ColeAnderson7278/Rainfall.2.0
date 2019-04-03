@@ -33,10 +33,9 @@ class App extends React.Component {
                 id="appContainer"
                 tabIndex="0"
                 onKeyDown={event => (
-                    this.movePlayer(event),
-                    this.restartGame(event),
-                    this.slidePlayer(event)
+                    this.movePlayer(event), this.restartGame(event)
                 )}
+                onKeyUp={event => this.slidePlayer(event)}
             >
                 <div id="scoreArea">
                     <p>Your Score: {this.state.userScore}</p>
@@ -189,7 +188,10 @@ class App extends React.Component {
     dropRain() {
         var updatedDrops = [];
         for (var drop of this.state.rainDrops) {
-            updatedDrops.push({ x: drop.x, y: (drop.y += 5) });
+            updatedDrops.push({
+                x: (drop.x += drop.x > this.state.userLocationX + 10 ? -1 : 1),
+                y: (drop.y += 5)
+            });
         }
         this.setState({
             rainDrops: updatedDrops
