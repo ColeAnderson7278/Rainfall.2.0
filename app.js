@@ -48,7 +48,9 @@ class App extends React.Component {
                         width={this.state.userWidth}
                         eyePosition={this.state.eyePosition}
                     />
-                    <div id="modalContainer" />
+                    <div id="modalContainer">
+                        <Modal isGameOver={this.state.gameOver} />
+                    </div>
                 </div>
             </div>
         );
@@ -172,18 +174,20 @@ class App extends React.Component {
                     drop.x + 5 >= this.state.userLocationX &&
                     drop.x <= this.state.userLocationX + this.state.userWidth
                 ) {
-                    ReactDOM.render(
-                        <Modal />,
-                        document.getElementById("modalContainer")
-                    );
                     this.setState({
                         gameOver: true
                     });
-                    // this.resetTotalState();
                 }
             }
         }
     }
+
+    // showGameOverScreen() {
+    //     ReactDOM.render(
+    //         <Modal isGameOver={this.state.gameOver} />,
+    //         document.getElementById("modalContainer")
+    //     );
+    // }
 
     tick() {
         if (this.state.rainDrops.length == 0) {
@@ -245,12 +249,19 @@ class RainDrop extends React.Component {
 }
 
 class Modal extends React.Component {
+    constructor(props) {
+        super(props);
+    }
     render() {
-        return (
-            <div id="gameModal">
-                <p id="modalText">Game Over</p>
-            </div>
-        );
+        if (!this.props.isGameOver) {
+            return <div />;
+        } else {
+            return (
+                <div id="gameModal">
+                    <p id="modalText">Game Over</p>
+                </div>
+            );
+        }
     }
 }
 
