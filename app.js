@@ -6,7 +6,8 @@ class App extends React.Component {
             gameOver: false,
             userWidth: 25,
             userHeight: 25,
-            userMovementDistance: 5,
+            userMovementDistance: 8,
+            userSlideDistance: 24,
             playAreaWidth: 300,
             playAreaHeight: 300,
             userLocationX: 140,
@@ -32,7 +33,9 @@ class App extends React.Component {
                 id="appContainer"
                 tabIndex="0"
                 onKeyDown={event => (
-                    this.movePlayer(event), this.restartGame(event)
+                    this.movePlayer(event),
+                    this.restartGame(event),
+                    this.slidePlayer(event)
                 )}
             >
                 <div id="scoreArea">
@@ -68,7 +71,9 @@ class App extends React.Component {
         if (!this.state.gameOver) {
             if (event.keyCode == 37) {
                 this.state.eyePosition = "left";
-                if (this.state.userLocationX >= 5) {
+                if (
+                    this.state.userLocationX >= this.state.userMovementDistance
+                ) {
                     this.setState({
                         userLocationX: (this.state.userLocationX -= this.state.userMovementDistance)
                     });
@@ -89,56 +94,90 @@ class App extends React.Component {
         }
     }
 
+    slidePlayer(event) {
+        if (!this.state.gameOver) {
+            if (event.keyCode == 40) {
+                if (this.state.eyePosition == "left") {
+                    if (
+                        this.state.userLocationX <=
+                        this.state.playAreaWidth -
+                            this.state.userWidth -
+                            this.state.userSlideDistance
+                    ) {
+                        this.setState({
+                            userLocationX: (this.state.userLocationX += this.state.userSlideDistance)
+                        });
+                    } else {
+                        this.setState({
+                            userLocationX:
+                                this.state.playAreaWidth - this.state.userWidth
+                        });
+                    }
+                } else if (this.state.eyePosition == "right") {
+                    if (
+                        this.state.userLocationX >= this.state.userSlideDistance
+                    ) {
+                        this.setState({
+                            userLocationX: (this.state.userLocationX -= this.state.userSlideDistance)
+                        });
+                    } else {
+                        this.setState({
+                            userLocationX: 0
+                        });
+                    }
+                }
+            }
+        }
+    }
+
     generateRainDrops() {
         this.setState({
             rainDrops: _.concat(
                 this.state.rainDrops,
                 {
-                    x:
-                        Math.floor(
-                            Math.random() * this.state.playAreaWidth - 10
-                        ) + 10,
+                    x: Math.random() * (this.state.playAreaWidth - 16) + 16,
                     y: 0
                 },
                 {
-                    x:
-                        Math.floor(
-                            Math.random() * this.state.playAreaWidth - 10
-                        ) + 10,
+                    x: Math.random() * (this.state.playAreaWidth - 16) + 16,
                     y: 0
                 },
                 {
-                    x:
-                        Math.floor(
-                            Math.random() * this.state.playAreaWidth - 10
-                        ) + 10,
+                    x: Math.random() * (this.state.playAreaWidth - 16) + 16,
                     y: 0
                 },
                 {
-                    x:
-                        Math.floor(
-                            Math.random() * this.state.playAreaWidth - 10
-                        ) + 10,
+                    x: Math.random() * (this.state.playAreaWidth - 16) + 16,
                     y: 0
                 },
                 {
-                    x:
-                        Math.floor(
-                            Math.random() * this.state.playAreaWidth - 10
-                        ) + 10,
+                    x: Math.random() * (this.state.playAreaWidth - 16) + 16,
                     y: 0
                 }
             )
         });
     }
 
+    getTotalRainDrops() {
+        var score = this.state.userScore;
+        if (score < 2500) {
+            return 6;
+        } else if (score < 5000) {
+            return 8;
+        } else if (score < 7500) {
+            return 10;
+        } else if (score < 10000) {
+            return 12;
+        } else {
+            return 15;
+        }
+    }
+
     resetRainDrops() {
         var resetDrops = [];
-        for (var drop of this.state.rainDrops) {
+        for (var i = 0; i < this.getTotalRainDrops(); i++) {
             resetDrops.push({
-                x:
-                    Math.floor(Math.random() * this.state.playAreaWidth - 10) +
-                    10,
+                x: Math.random() * (this.state.playAreaWidth - 16 - 16) + 16,
                 y: 0
             });
         }
@@ -182,13 +221,6 @@ class App extends React.Component {
         }
     }
 
-    // showGameOverScreen() {
-    //     ReactDOM.render(
-    //         <Modal isGameOver={this.state.gameOver} />,
-    //         document.getElementById("modalContainer")
-    //     );
-    // }
-
     tick() {
         if (this.state.rainDrops.length == 0) {
             this.generateRainDrops();
@@ -209,6 +241,7 @@ class App extends React.Component {
             userWidth: 25,
             userHeight: 25,
             userMovementDistance: 5,
+            userSlideDistance: 24,
             playAreaWidth: 300,
             playAreaHeight: 300,
             userLocationX: 140,
