@@ -20,16 +20,29 @@
 
 #scoreArea p {
     margin: 5px;
+    text-shadow: 1px 1px black;
 }
 
 #userArea {
     display: flex;
     background-image: radial-gradient(rgb(196, 170, 123), rgb(155, 123, 64));
-    border: 2px double gold;
-    border-radius: 3px;
     position: relative;
     margin-left: auto;
     margin-right: auto;
+}
+
+#floor {
+    margin-left: auto;
+    margin-right: auto;
+    height: 25px;
+    display: flex;
+}
+
+.floorBoard {
+    height: 100%;
+    width: 100%;
+    background-color: coral;
+    border: solid 1px rgb(179, 89, 26);
 }
 
 #userIcon {
@@ -65,24 +78,33 @@
 }
 
 #gameModal {
-    z-index: 2;
+    z-index: 1;
     position: absolute;
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.651);
+    background-color: rgb(0, 0, 0);
     -webkit-animation-name: transition;
-    -webkit-animation-duration: 0.2s;
+    -webkit-animation-duration: 0.8s;
     animation-name: transition;
-    animation-duration: 0.2s;
+    animation-duration: 0.8s;
+}
+
+.curtain {
+    height: 100%;
+    width: 100%;
+    background-color: rgb(219, 33, 33);
+    border: 1px solid rgb(31, 30, 30);
+    border-radius: 0px 0px 20px 20px;
 }
 
 #modalText {
     font-size: 35px;
-    position: relative;
-    color: red;
+    position: absolute;
+    color: white;
+    text-shadow: 2px 2px black;
     background: none;
 }
 
@@ -95,9 +117,9 @@
 
 @keyframes transition {
     0% {
-        opacity: 0;
+        top: -200px;
     }
     100% {
-        opacity: 1;
+        top: 0px;
     }
 }

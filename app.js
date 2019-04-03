@@ -27,6 +27,9 @@ class App extends React.Component {
             width: this.state.playAreaWidth + "px",
             height: this.state.playAreaHeight + "px"
         };
+        var floorStyle = {
+            width: this.state.playAreaWidth + "px"
+        };
         return (
             <div
                 ref={this.divRef}
@@ -53,6 +56,26 @@ class App extends React.Component {
                     <div id="modalContainer">
                         <Modal isGameOver={this.state.gameOver} />
                     </div>
+                </div>
+                <div style={floorStyle} id="floor">
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
+                    <div className="floorBoard" />
                 </div>
             </div>
         );
@@ -293,6 +316,18 @@ class Modal extends React.Component {
         } else {
             return (
                 <div id="gameModal">
+                    <div className="curtain" />
+                    <div className="curtain" />
+                    <div className="curtain" />
+                    <div className="curtain" />
+                    <div className="curtain" />
+                    <div className="curtain" />
+                    <div className="curtain" />
+                    <div className="curtain" />
+                    <div className="curtain" />
+                    <div className="curtain" />
+                    <div className="curtain" />
+                    <div className="curtain" />
                     <p id="modalText">Game Over</p>
                 </div>
             );
