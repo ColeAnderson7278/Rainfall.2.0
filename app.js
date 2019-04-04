@@ -19,6 +19,7 @@ class App extends React.Component {
     }
 
     componentDidMount() {
+        this.getHighScores();
         this.divRef.current.focus();
     }
 
@@ -77,14 +78,18 @@ class App extends React.Component {
                     <div className="floorBoard" />
                     <div className="floorBoard" />
                 </div>
-                <ScoreForm userScore={this.state.userScore} />
+                <ScoreForm
+                    isGameOver={this.state.gameOver}
+                    userScore={this.state.userScore}
+                />
+                <p>{this.state.highScores}</p>
             </div>
         );
     }
 
     restartGame(event) {
         if (this.state.gameOver) {
-            if (event.keyCode == 16) {
+            if (event.keyCode == 38) {
                 this.resetTotalState();
             }
         }
@@ -277,8 +282,20 @@ class App extends React.Component {
             userLocationX: 140,
             eyePosition: "left",
             rainDrops: [],
+            highScores: [],
             userScore: 0
         });
+    }
+
+    getHighScores() {
+        fetch("https://rainfall-backend.herokuapp.com/high-score", {
+            method: "GET"
+        })
+            .then(res => res.json())
+            .then(
+                response => (this.state.highScores = JSON.stringify(response))
+            )
+            .catch(error => console.error("Error:", error));
     }
 }
 
@@ -346,20 +363,47 @@ class ScoreForm extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleSubmit(e) {
-        alert("The value is: " + this.props.userScore);
-        e.preventDefault();
+    handleSubmit(event) {
+        const formData = new FormData();
+        formData.append("name", this.input.value);
+        formData.append("number", this.props.userScore);
+        fetch("https://rainfall-backend.herokuapp.com/new-score", {
+            method: "POST",
+            mode: "cors",
+            body: formData
+        });
+        event.preventDefault();
     }
 
     render() {
+        if (this.props.isGameOver) {
+            return (
+                <form id="scoreForm" onSubmit={this.handleSubmit}>
+                    <label>
+                        Name:
+                        <input
+                            required
+                            min="1"
+                            max="10"
+                            type="text"
+                            ref={input => (this.input = input)}
+                        />
+                    </label>
+                    <input type="submit" value="Submit" />
+                </form>
+            );
+        } else {
+            return <div />;
+        }
+    }
+}
+
+class HighScore extends React.Component {
+    render() {
         return (
-            <form id="scoreForm" onSubmit={this.handleSubmit}>
-                <label>
-                    Name:
-                    <input type="text" ref={input => (this.input = input)} />
-                </label>
-                <input type="submit" value="Submit" />
-            </form>
+            <div>
+                <p>{this.prop.highScore}</p>
+            </div>
         );
     }
 }
