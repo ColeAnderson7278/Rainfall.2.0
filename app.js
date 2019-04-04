@@ -77,13 +77,14 @@ class App extends React.Component {
                     <div className="floorBoard" />
                     <div className="floorBoard" />
                 </div>
+                <ScoreForm userScore={this.state.userScore} />
             </div>
         );
     }
 
     restartGame(event) {
         if (this.state.gameOver) {
-            if (event.keyCode == 13) {
+            if (event.keyCode == 16) {
                 this.resetTotalState();
             }
         }
@@ -156,6 +157,10 @@ class App extends React.Component {
         this.setState({
             rainDrops: _.concat(
                 this.state.rainDrops,
+                {
+                    x: Math.random() * (this.state.playAreaWidth - 16) + 16,
+                    y: 0
+                },
                 {
                     x: Math.random() * (this.state.playAreaWidth - 16) + 16,
                     y: 0
@@ -332,6 +337,30 @@ class Modal extends React.Component {
                 </div>
             );
         }
+    }
+}
+
+class ScoreForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit(e) {
+        alert("The value is: " + this.props.userScore);
+        e.preventDefault();
+    }
+
+    render() {
+        return (
+            <form id="scoreForm" onSubmit={this.handleSubmit}>
+                <label>
+                    Name:
+                    <input type="text" ref={input => (this.input = input)} />
+                </label>
+                <input type="submit" value="Submit" />
+            </form>
+        );
     }
 }
 
