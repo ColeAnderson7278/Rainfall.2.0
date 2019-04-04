@@ -4,6 +4,7 @@ class App extends React.Component {
         this.divRef = React.createRef();
         this.state = {
             gameOver: false,
+            formSubmitted: false,
             userWidth: 25,
             userHeight: 25,
             userMovementDistance: 8,
@@ -13,6 +14,7 @@ class App extends React.Component {
             userLocationX: 140,
             eyePosition: "left",
             rainDrops: [],
+            highScores: [],
             userScore: 0
         };
         this.dropTick = setInterval(() => this.tick(), 30);
@@ -21,6 +23,10 @@ class App extends React.Component {
     componentDidMount() {
         this.getHighScores();
         this.divRef.current.focus();
+    }
+
+    scoreSubmitted() {
+        this.setState({ formSubmitted: true });
     }
 
     render() {
@@ -80,9 +86,13 @@ class App extends React.Component {
                 </div>
                 <ScoreForm
                     isGameOver={this.state.gameOver}
+                    isFormSubmitted={this.state.formSubmitted}
                     userScore={this.state.userScore}
+                    onSubmit={() => (
+                        this.scoreSubmitted(), this.divRef.current.focus()
+                    )}
                 />
-                <p>{this.state.highScores}</p>
+                <p>{this.highScores}</p>
             </div>
         );
     }
@@ -273,6 +283,7 @@ class App extends React.Component {
     resetTotalState() {
         this.setState({
             gameOver: false,
+            formSubmitted: false,
             userWidth: 25,
             userHeight: 25,
             userMovementDistance: 5,
@@ -371,25 +382,30 @@ class ScoreForm extends React.Component {
             method: "POST",
             mode: "cors",
             body: formData
-        });
+        }).then(() => this.props.onSubmit());
         event.preventDefault();
     }
 
     render() {
-        if (this.props.isGameOver) {
+        if (this.props.isGameOver && !this.props.isFormSubmitted) {
             return (
                 <form id="scoreForm" onSubmit={this.handleSubmit}>
                     <label>
-                        Name:
                         <input
                             required
+                            id="playerNameInput"
+                            placeholder="Enter name then submit or hit restart key"
                             min="1"
                             max="10"
                             type="text"
                             ref={input => (this.input = input)}
                         />
                     </label>
-                    <input type="submit" value="Submit" />
+                    <input
+                        id="scoreFormSubmitBtn"
+                        type="submit"
+                        value="Submit"
+                    />
                 </form>
             );
         } else {
