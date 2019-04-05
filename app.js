@@ -56,53 +56,65 @@ class App extends React.Component {
                 )}
                 onKeyUp={event => this.slidePlayer(event)}
             >
-                <div id="scoreArea">
-                    <p>Your Score: {this.state.userScore}</p>
+                <div id="controlsContainer">
+                    <p id="controlsHeader">Controls:</p>
+                    <hr />
+                    <p id="controlsInfo">Left Arrow - Move Left</p>
+                    <p id="controlsInfo">Right Arrow - Move Right</p>
+                    <p id="controlsInfo">Down Arrow - Back Roll</p>
+                    <p id="controlsInfo">Up Arrow - Reset Game</p>
                 </div>
-                <div style={userAreaStyle} id="userArea">
-                    {this.state.rainDrops.map((drop, key) => (
-                        <RainDrop key={key} x={drop.x} y={drop.y} />
-                    ))}
-                    <User
-                        position={this.state.userLocationX}
-                        height={this.state.userHeight}
-                        width={this.state.userWidth}
-                        eyePosition={this.state.eyePosition}
-                    />
-                    <div id="modalContainer">
-                        <Modal isGameOver={this.state.gameOver} />
+                <div>
+                    <div id="scoreArea">
+                        <p>Your Score: {this.state.userScore}</p>
                     </div>
+                    <div style={userAreaStyle} id="userArea">
+                        {this.state.rainDrops.map((drop, key) => (
+                            <RainDrop key={key} x={drop.x} y={drop.y} />
+                        ))}
+                        <User
+                            position={this.state.userLocationX}
+                            height={this.state.userHeight}
+                            width={this.state.userWidth}
+                            eyePosition={this.state.eyePosition}
+                        />
+                        <div id="modalContainer">
+                            <Modal isGameOver={this.state.gameOver} />
+                        </div>
+                    </div>
+                    <div style={floorStyle} id="floor">
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                        <div className="floorBoard" />
+                    </div>
+                    <ScoreForm
+                        isGameOver={this.state.gameOver}
+                        isFormSubmitted={this.state.formSubmitted}
+                        userScore={this.state.userScore}
+                        onSubmit={() => (
+                            this.scoreSubmitted(), this.divRef.current.focus()
+                        )}
+                    />
                 </div>
-                <div style={floorStyle} id="floor">
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                    <div className="floorBoard" />
-                </div>
-                <ScoreForm
-                    isGameOver={this.state.gameOver}
-                    isFormSubmitted={this.state.formSubmitted}
-                    userScore={this.state.userScore}
-                    onSubmit={() => (
-                        this.scoreSubmitted(), this.divRef.current.focus()
-                    )}
-                />
                 <div>
                     <div id="highScoresContainer">
+                        <p id="highScoreHeader">High Scores:</p>
+                        <hr />
                         {this.state.highScores.map((score, key) => (
                             <HighScore
                                 key={key}
@@ -425,8 +437,9 @@ class ScoreForm extends React.Component {
 class HighScore extends React.Component {
     render() {
         return (
-            <div>
-                <p>{this.props.name}</p>
+            <div className="userInfoContainer">
+                <p className="userName">{this.props.name}</p>
+                <p className="userScore">{this.props.number}</p>
             </div>
         );
     }

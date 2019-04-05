@@ -1,7 +1,8 @@
 #appContainer {
-    width: 500;
+    width: 600px;
     margin-left: auto;
     margin-right: auto;
+    display: flex;
 }
 
 #appContainer:hover,
@@ -149,4 +150,40 @@
 #scoreFormSubmitBtn:hover {
     cursor: pointer;
     background-color: rgb(190, 97, 97);
+}
+
+#controlsContainer,
+#highScoresContainer {
+    margin: 15px;
+    width: 150px;
+    color: rgb(15, 15, 15);
+}
+
+#controlsHeader {
+    font-size: 22px;
+    margin: 15px;
+    text-align: center;
+}
+
+#controlsInfo {
+    margin: 0;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+#highScoreHeader {
+    font-size: 22px;
+    margin: 15px;
+    text-align: center;
+}
+.userInfoContainer {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+
+.userName,
+.userScore {
+    margin: 0;
+    font-size: 20px;
 }
