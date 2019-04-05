@@ -14,8 +14,8 @@ class App extends React.Component {
             userLocationX: 140,
             eyePosition: "left",
             rainDrops: [],
-            highScores: [],
-            userScore: 0
+            userScore: 0,
+            highScores: []
         };
         this.dropTick = setInterval(() => this.tick(), 30);
     }
@@ -23,6 +23,15 @@ class App extends React.Component {
     componentDidMount() {
         this.getHighScores();
         this.divRef.current.focus();
+    }
+
+    getHighScores() {
+        fetch("https://rainfall-backend.herokuapp.com/high-scores", {
+            method: "GET"
+        })
+            .then(res => res.json())
+            .then(highScores => this.setState({ highScores: highScores }))
+            .catch(error => console.error("Error:", error));
     }
 
     scoreSubmitted() {
@@ -92,7 +101,17 @@ class App extends React.Component {
                         this.scoreSubmitted(), this.divRef.current.focus()
                     )}
                 />
-                <p>{this.highScores}</p>
+                <div>
+                    <div id="highScoresContainer">
+                        {this.state.highScores.map((score, key) => (
+                            <HighScore
+                                key={key}
+                                name={score.name}
+                                number={score.number}
+                            />
+                        ))}
+                    </div>
+                </div>
             </div>
         );
     }
@@ -159,6 +178,7 @@ class App extends React.Component {
                             userLocationX: (this.state.userLocationX -= this.state.userSlideDistance)
                         });
                     } else {
+                        highScores: [];
                         this.setState({
                             userLocationX: 0
                         });
@@ -293,20 +313,8 @@ class App extends React.Component {
             userLocationX: 140,
             eyePosition: "left",
             rainDrops: [],
-            highScores: [],
             userScore: 0
         });
-    }
-
-    getHighScores() {
-        fetch("https://rainfall-backend.herokuapp.com/high-score", {
-            method: "GET"
-        })
-            .then(res => res.json())
-            .then(
-                response => (this.state.highScores = JSON.stringify(response))
-            )
-            .catch(error => console.error("Error:", error));
     }
 }
 
@@ -395,8 +403,8 @@ class ScoreForm extends React.Component {
                             required
                             id="playerNameInput"
                             placeholder="Enter name then submit or hit restart key"
-                            min="1"
-                            max="10"
+                            minLength="1"
+                            maxLength="10"
                             type="text"
                             ref={input => (this.input = input)}
                         />
@@ -418,7 +426,7 @@ class HighScore extends React.Component {
     render() {
         return (
             <div>
-                <p>{this.prop.highScore}</p>
+                <p>{this.props.name}</p>
             </div>
         );
     }
