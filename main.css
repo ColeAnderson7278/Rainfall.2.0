@@ -89,7 +89,6 @@
     display: flex;
     background-color: rgba(0, 0, 0, 0.726);
     justify-content: center;
-    align-items: center;
     -webkit-animation-name: drop;
     -webkit-animation-duration: 0.8s;
     animation-name: drop;
@@ -105,11 +104,26 @@
 }
 
 #modalText {
-    font-size: 35px;
+    font-size: 45px;
     position: absolute;
+    top: 15%;
     color: white;
     text-shadow: 2px 2px black;
     background: none;
+}
+
+#modalControlInfo {
+    position: absolute;
+    text-align: center;
+    margin: 25px 0;
+    top: 50%;
+    color: white;
+    text-shadow: 2px 2px black;
+}
+
+#modalControlInfo p {
+    margin: 5px 0;
+    font-size: 18px;
 }
 
 #modalText:hover,
@@ -155,22 +169,26 @@
     background-color: rgb(190, 97, 97);
 }
 
-#controlsContainer,
 #highScoresContainer {
     margin: 15px;
     width: 150px;
     color: rgb(15, 15, 15);
 }
 
-#controlsInfo {
-    margin: 0;
-    font-size: 17px;
-    margin-right: 50px;
-    color: #db2121;
+#controlsContainer {
+    position: absolute;
+    display: flex;
+    left: 5%;
+    top: 10%;
 }
 
-#controlsContainer {
-    display: flex;
+#controlsInfo {
+    margin: 0;
+    text-align: center;
+    margin: 0 10px;
+    font-size: 12px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.5);
 }
 
 #highScoreHeader {
@@ -187,5 +205,9 @@
 .userName,
 .userScore {
     margin: 0;
+    font-size: 18px;
+}
+
+.fas {
     font-size: 18px;
 }

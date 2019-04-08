@@ -65,6 +65,7 @@ class App extends React.Component {
                             <p>Your Score: {this.state.userScore}</p>
                         </div>
                         <div style={userAreaStyle} id="userArea">
+                            <Controls />
                             {this.state.rainDrops.map((drop, key) => (
                                 <RainDrop key={key} x={drop.x} y={drop.y} />
                             ))}
@@ -105,7 +106,6 @@ class App extends React.Component {
                         </div>
                     </div>
                 </div>
-                <Controls />
             </div>
         );
     }
@@ -283,20 +283,8 @@ class App extends React.Component {
     }
 
     resetTotalState() {
-        this.setState({
-            gameOver: false,
-            formSubmitted: false,
-            userWidth: 25,
-            userHeight: 25,
-            userMovementDistance: 5,
-            userSlideDistance: 24,
-            playAreaWidth: 300,
-            playAreaHeight: 300,
-            userLocationX: 140,
-            eyePosition: "left",
-            rainDrops: [],
-            userScore: 0
-        });
+        this.setState(START_STATE);
+        this.getHighScores();
     }
 }
 
@@ -324,6 +312,10 @@ function Modal({ isGameOver }) {
             <div id="gameModal">
                 {Array(12).fill(<div className="curtain" />)}
                 <p id="modalText">Game Over</p>
+                <div id="modalControlInfo">
+                    <i class="fas fa-arrow-up" />
+                    <p>To Reset Game</p>
+                </div>
             </div>
         );
     }
@@ -390,18 +382,18 @@ function HighScore({ name, number }) {
 function Controls() {
     return (
         <div id="controlsContainer">
-            <p id="controlsInfo">
-                Left Arrow <hr /> Move Left
-            </p>
-            <p id="controlsInfo">
-                Right Arrow <hr /> Move Right
-            </p>
-            <p id="controlsInfo">
-                Down Arrow <hr /> Back Roll
-            </p>
-            <p id="controlsInfo">
-                Up Arrow <hr /> Reset Game
-            </p>
+            <div id="controlsInfo">
+                <i class="fas fa-arrow-left" />
+                <p>Move Left</p>
+            </div>
+            <div id="controlsInfo">
+                <i class="fas fa-arrow-down" />
+                <p>Back Roll</p>
+            </div>
+            <div id="controlsInfo">
+                <i class="fas fa-arrow-right" />
+                <p>Move Right</p>
+            </div>
         </div>
     );
 }
