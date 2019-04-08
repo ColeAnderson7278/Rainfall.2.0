@@ -1,22 +1,27 @@
+const HEIGHT = 300,
+    WIDTH = 300,
+    MOVEMENT_DISTANCE = 8,
+    SLIDE_DISTANCE = 24,
+    USER_HEIGHT = 25,
+    USER_WIDTH = 25;
+
+const START_STATE = {
+    gameOver: false,
+    formSubmitted: false,
+    user: {
+        locationX: 140,
+        direction: "left"
+    },
+    rainDrops: [],
+    userScore: 0,
+    highScores: []
+};
+
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.divRef = React.createRef();
-        this.state = {
-            gameOver: false,
-            formSubmitted: false,
-            userWidth: 25,
-            userHeight: 25,
-            userMovementDistance: 8,
-            userSlideDistance: 24,
-            playAreaWidth: 300,
-            playAreaHeight: 300,
-            userLocationX: 140,
-            eyePosition: "left",
-            rainDrops: [],
-            userScore: 0,
-            highScores: []
-        };
+        this.state = START_STATE;
         this.dropTick = setInterval(() => this.tick(), 30);
     }
 
@@ -38,11 +43,11 @@ class App extends React.Component {
 
     render() {
         var userAreaStyle = {
-            width: this.state.playAreaWidth + "px",
-            height: this.state.playAreaHeight + "px"
+            width: WIDTH + "px",
+            height: HEIGHT + "px"
         };
         var floorStyle = {
-            width: this.state.playAreaWidth + "px"
+            width: WIDTH + "px"
         };
         return (
             <div
@@ -54,74 +59,53 @@ class App extends React.Component {
                 )}
                 onKeyUp={event => this.slidePlayer(event)}
             >
-                <div id="controlsContainer">
-                    <p id="controlsHeader">Controls:</p>
-                    <hr />
-                    <p id="controlsInfo">Left Arrow - Move Left</p>
-                    <p id="controlsInfo">Right Arrow - Move Right</p>
-                    <p id="controlsInfo">Down Arrow - Back Roll</p>
-                    <p id="controlsInfo">Up Arrow - Reset Game</p>
-                </div>
-                <div>
-                    <div id="scoreArea">
-                        <p>Your Score: {this.state.userScore}</p>
-                    </div>
-                    <div style={userAreaStyle} id="userArea">
-                        {this.state.rainDrops.map((drop, key) => (
-                            <RainDrop key={key} x={drop.x} y={drop.y} />
-                        ))}
-                        <User
-                            position={this.state.userLocationX}
-                            height={this.state.userHeight}
-                            width={this.state.userWidth}
-                            eyePosition={this.state.eyePosition}
+                <div id="highScoreGameAreaContainer">
+                    <div>
+                        <div id="scoreArea">
+                            <p>Your Score: {this.state.userScore}</p>
+                        </div>
+                        <div style={userAreaStyle} id="userArea">
+                            {this.state.rainDrops.map((drop, key) => (
+                                <RainDrop key={key} x={drop.x} y={drop.y} />
+                            ))}
+                            <User
+                                locationX={this.state.user.locationX}
+                                userHeight={USER_HEIGHT}
+                                userWidth={USER_WIDTH}
+                                direction={this.state.user.direction}
+                            />
+                            <div id="modalContainer">
+                                <Modal isGameOver={this.state.gameOver} />
+                            </div>
+                        </div>
+                        <div style={floorStyle} id="floor">
+                            {Array(18).fill(<div className="floorBoard" />)}
+                        </div>
+                        <ScoreForm
+                            isGameOver={this.state.gameOver}
+                            isFormSubmitted={this.state.formSubmitted}
+                            userScore={this.state.userScore}
+                            onSubmit={() => (
+                                this.scoreSubmitted(),
+                                this.divRef.current.focus()
+                            )}
                         />
-                        <div id="modalContainer">
-                            <Modal isGameOver={this.state.gameOver} />
+                    </div>
+                    <div>
+                        <div id="highScoresContainer">
+                            <p id="highScoreHeader">High Scores:</p>
+                            <hr />
+                            {this.state.highScores.map((score, key) => (
+                                <HighScore
+                                    key={key}
+                                    name={score.name}
+                                    number={score.number}
+                                />
+                            ))}
                         </div>
                     </div>
-                    <div style={floorStyle} id="floor">
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                        <div className="floorBoard" />
-                    </div>
-                    <ScoreForm
-                        isGameOver={this.state.gameOver}
-                        isFormSubmitted={this.state.formSubmitted}
-                        userScore={this.state.userScore}
-                        onSubmit={() => (
-                            this.scoreSubmitted(), this.divRef.current.focus()
-                        )}
-                    />
                 </div>
-                <div>
-                    <div id="highScoresContainer">
-                        <p id="highScoreHeader">High Scores:</p>
-                        <hr />
-                        {this.state.highScores.map((score, key) => (
-                            <HighScore
-                                key={key}
-                                name={score.name}
-                                number={score.number}
-                            />
-                        ))}
-                    </div>
-                </div>
+                <Controls />
             </div>
         );
     }
@@ -137,24 +121,20 @@ class App extends React.Component {
     movePlayer(event) {
         if (!this.state.gameOver) {
             if (event.keyCode == 37) {
-                this.state.eyePosition = "left";
-                if (
-                    this.state.userLocationX >= this.state.userMovementDistance
-                ) {
+                this.state.user.direction = "left";
+                if (this.state.user.locationX >= MOVEMENT_DISTANCE) {
                     this.setState({
-                        userLocationX: (this.state.userLocationX -= this.state.userMovementDistance)
+                        userLocationX: (this.state.user.locationX -= MOVEMENT_DISTANCE)
                     });
                 }
             } else if (event.keyCode == 39) {
-                this.state.eyePosition = "right";
+                this.state.user.direction = "right";
                 if (
-                    this.state.userLocationX <=
-                    this.state.playAreaWidth -
-                        this.state.userWidth -
-                        this.state.userMovementDistance
+                    this.state.user.locationX <=
+                    WIDTH - USER_WIDTH - MOVEMENT_DISTANCE
                 ) {
                     this.setState({
-                        userLocationX: (this.state.userLocationX += this.state.userMovementDistance)
+                        userLocationX: (this.state.user.locationX += MOVEMENT_DISTANCE)
                     });
                 }
             }
@@ -164,28 +144,23 @@ class App extends React.Component {
     slidePlayer(event) {
         if (!this.state.gameOver) {
             if (event.keyCode == 40) {
-                if (this.state.eyePosition == "left") {
+                if (this.state.user.direction == "left") {
                     if (
-                        this.state.userLocationX <=
-                        this.state.playAreaWidth -
-                            this.state.userWidth -
-                            this.state.userSlideDistance
+                        this.state.user.locationX <=
+                        WIDTH - USER_WIDTH - SLIDE_DISTANCE
                     ) {
                         this.setState({
-                            userLocationX: (this.state.userLocationX += this.state.userSlideDistance)
+                            userLocationX: (this.state.user.locationX += SLIDE_DISTANCE)
                         });
                     } else {
                         this.setState({
-                            userLocationX:
-                                this.state.playAreaWidth - this.state.userWidth
+                            userLocationX: WIDTH - USER_WIDTH
                         });
                     }
-                } else if (this.state.eyePosition == "right") {
-                    if (
-                        this.state.userLocationX >= this.state.userSlideDistance
-                    ) {
+                } else if (this.state.user.direction == "right") {
+                    if (this.state.user.locationX >= SLIDE_DISTANCE) {
                         this.setState({
-                            userLocationX: (this.state.userLocationX -= this.state.userSlideDistance)
+                            userLocationX: (this.state.user.locationX -= SLIDE_DISTANCE)
                         });
                     } else {
                         highScores: [];
@@ -203,27 +178,27 @@ class App extends React.Component {
             rainDrops: _.concat(
                 this.state.rainDrops,
                 {
-                    x: Math.random() * (this.state.playAreaWidth - 16) + 16,
+                    x: Math.random() * (WIDTH - 16) + 16,
                     y: 0
                 },
                 {
-                    x: Math.random() * (this.state.playAreaWidth - 16) + 16,
+                    x: Math.random() * (WIDTH - 16) + 16,
                     y: 0
                 },
                 {
-                    x: Math.random() * (this.state.playAreaWidth - 16) + 16,
+                    x: Math.random() * (WIDTH - 16) + 16,
                     y: 0
                 },
                 {
-                    x: Math.random() * (this.state.playAreaWidth - 16) + 16,
+                    x: Math.random() * (WIDTH - 16) + 16,
                     y: 0
                 },
                 {
-                    x: Math.random() * (this.state.playAreaWidth - 16) + 16,
+                    x: Math.random() * (WIDTH - 16) + 16,
                     y: 0
                 },
                 {
-                    x: Math.random() * (this.state.playAreaWidth - 16) + 16,
+                    x: Math.random() * (WIDTH - 16) + 16,
                     y: 0
                 }
             )
@@ -249,7 +224,7 @@ class App extends React.Component {
         var resetDrops = [];
         for (var i = 0; i < this.getTotalRainDrops(); i++) {
             resetDrops.push({
-                x: Math.random() * (this.state.playAreaWidth - 16 - 16) + 16,
+                x: Math.random() * (WIDTH - 16 - 16) + 16,
                 y: 0
             });
         }
@@ -262,7 +237,7 @@ class App extends React.Component {
         var updatedDrops = [];
         for (var drop of this.state.rainDrops) {
             updatedDrops.push({
-                x: (drop.x += drop.x > this.state.userLocationX + 10 ? -1 : 1),
+                x: (drop.x += drop.x > this.state.user.locationX + 10 ? -1 : 1),
                 y: (drop.y += 5)
             });
         }
@@ -279,14 +254,11 @@ class App extends React.Component {
     }
 
     checkForGameOver() {
-        if (
-            this.state.rainDrops[0].y >=
-            this.state.playAreaHeight - (this.state.userHeight + 15)
-        ) {
+        if (this.state.rainDrops[0].y >= HEIGHT - (USER_HEIGHT + 15)) {
             for (var drop of this.state.rainDrops) {
                 if (
-                    drop.x + 5 >= this.state.userLocationX &&
-                    drop.x <= this.state.userLocationX + this.state.userWidth
+                    drop.x + 5 >= this.state.user.locationX &&
+                    drop.x <= this.state.user.locationX + USER_WIDTH
                 ) {
                     this.setState({
                         gameOver: true
@@ -302,7 +274,7 @@ class App extends React.Component {
         }
         this.checkForGameOver();
         if (!this.state.gameOver) {
-            if (this.state.rainDrops[0].y > this.state.playAreaHeight - 20) {
+            if (this.state.rainDrops[0].y > HEIGHT - 20) {
                 this.resetRainDrops();
             }
             this.addPoints();
@@ -328,44 +300,32 @@ class App extends React.Component {
     }
 }
 
-class User extends React.Component {
-    render() {
-        var userStyle = {
-            height: this.props.height,
-            width: this.props.width,
-            left: this.props.position + "px"
-        };
-        var userInsideStyle = {
-            float: this.props.eyePosition
-        };
-        return (
-            <div style={userStyle} id="userIcon">
-                <div id="userHeadband" />
-                <div style={userInsideStyle} id="userEye" />
-            </div>
-        );
-    }
+function User({ userHeight, userWidth, locationX, direction }) {
+    return (
+        <div
+            style={{ height: userHeight, width: userWidth, left: locationX }}
+            id="userIcon"
+        >
+            <div id="userHeadband" />
+            <div style={{ float: direction }} id="userEye" />
+        </div>
+    );
 }
 
 function RainDrop({ x, y }) {
     return <div style={{ left: x, top: y }} className="rainDrop" />;
 }
 
-class Modal extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-    render() {
-        if (!this.props.isGameOver) {
-            return <div />;
-        } else {
-            return (
-                <div id="gameModal">
-                    {Array(12).fill(<div className="curtain" />)}
-                    <p id="modalText">Game Over</p>
-                </div>
-            );
-        }
+function Modal({ isGameOver }) {
+    if (!isGameOver) {
+        return <div />;
+    } else {
+        return (
+            <div id="gameModal">
+                {Array(12).fill(<div className="curtain" />)}
+                <p id="modalText">Game Over</p>
+            </div>
+        );
     }
 }
 
@@ -376,13 +336,16 @@ class ScoreForm extends React.Component {
     }
 
     handleSubmit(event) {
-        const formData = new FormData();
-        formData.append("name", this.input.value);
-        formData.append("number", this.props.userScore);
         fetch("https://rainfall-backend.herokuapp.com/new-score", {
             method: "POST",
             mode: "cors",
-            body: formData
+            headers: {
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify({
+                name: this.input.value,
+                number: this.props.userScore
+            })
         }).then(() => this.props.onSubmit());
         event.preventDefault();
     }
@@ -415,15 +378,32 @@ class ScoreForm extends React.Component {
     }
 }
 
-class HighScore extends React.Component {
-    render() {
-        return (
-            <div className="userInfoContainer">
-                <p className="userName">{this.props.name}</p>
-                <p className="userScore">{this.props.number}</p>
-            </div>
-        );
-    }
+function HighScore({ name, number }) {
+    return (
+        <div className="userInfoContainer">
+            <p className="userName">{name}</p>
+            <p className="userScore">{number}</p>
+        </div>
+    );
+}
+
+function Controls() {
+    return (
+        <div id="controlsContainer">
+            <p id="controlsInfo">
+                Left Arrow <hr /> Move Left
+            </p>
+            <p id="controlsInfo">
+                Right Arrow <hr /> Move Right
+            </p>
+            <p id="controlsInfo">
+                Down Arrow <hr /> Back Roll
+            </p>
+            <p id="controlsInfo">
+                Up Arrow <hr /> Reset Game
+            </p>
+        </div>
+    );
 }
 
 ReactDOM.render(<App />, document.getElementById("root"));
