@@ -347,14 +347,8 @@ class User extends React.Component {
     }
 }
 
-class RainDrop extends React.Component {
-    render() {
-        var rainDropStyle = {
-            left: this.props.x + "px",
-            top: this.props.y + "px"
-        };
-        return <div style={rainDropStyle} className="rainDrop" />;
-    }
+function RainDrop({ x, y }) {
+    return <div style={{ left: x, top: y }} className="rainDrop" />;
 }
 
 class Modal extends React.Component {
