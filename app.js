@@ -26,9 +26,7 @@ class App extends React.Component {
     }
 
     getHighScores() {
-        fetch("https://rainfall-backend.herokuapp.com/high-scores", {
-            method: "GET"
-        })
+        fetch("https://rainfall-backend.herokuapp.com/high-scores")
             .then(res => res.json())
             .then(highScores => this.setState({ highScores: highScores }))
             .catch(error => console.error("Error:", error));
