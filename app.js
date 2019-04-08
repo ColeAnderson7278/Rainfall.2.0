@@ -361,18 +361,7 @@ class Modal extends React.Component {
         } else {
             return (
                 <div id="gameModal">
-                    <div className="curtain" />
-                    <div className="curtain" />
-                    <div className="curtain" />
-                    <div className="curtain" />
-                    <div className="curtain" />
-                    <div className="curtain" />
-                    <div className="curtain" />
-                    <div className="curtain" />
-                    <div className="curtain" />
-                    <div className="curtain" />
-                    <div className="curtain" />
-                    <div className="curtain" />
+                    {Array(12).fill(<div className="curtain" />)}
                     <p id="modalText">Game Over</p>
                 </div>
             );
