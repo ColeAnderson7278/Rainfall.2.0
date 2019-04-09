@@ -1,5 +1,5 @@
 #appContainer {
-    width: 450px;
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
 }
@@ -12,7 +12,7 @@
 }
 
 #highScoreGameAreaContainer {
-    display: flex;
+    /* display: flex; */
 }
 
 #appContainer:hover,
@@ -198,22 +198,25 @@
 }
 
 #highScoresContainer {
-    margin: 25px;
+    margin: 5px;
     width: 150px;
     color: rgb(15, 15, 15);
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #controlsContainer {
     position: absolute;
     display: flex;
-    left: 5%;
     top: 10%;
+    left: 16%;
 }
 
 #controlsInfo {
     margin: 0;
     text-align: center;
-    margin: 0 10px;
+    margin: 0 20px;
     font-size: 12px;
     font-weight: bold;
     color: rgba(0, 0, 0, 0.5);
@@ -221,7 +224,8 @@
 
 #highScoreHeader {
     font-size: 20px;
-    margin: 15px;
+    margin: 0;
+    margin-bottom: 15px;
     text-align: center;
 }
 .userInfoContainer {
@@ -235,7 +239,6 @@
 }
 
 .userScore {
-    margin-left: 10px;
     color: #db2121;
 }
 

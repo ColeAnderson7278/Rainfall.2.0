@@ -1,5 +1,5 @@
 const HEIGHT = 300,
-    WIDTH = 300,
+    WIDTH = 500,
     MOVEMENT_DISTANCE = 8,
     SLIDE_DISTANCE = 24,
     USER_HEIGHT = 25,
@@ -9,7 +9,7 @@ const START_STATE = {
     gameOver: false,
     formSubmitted: false,
     user: {
-        locationX: 140,
+        locationX: WIDTH / 2 - USER_WIDTH / 2,
         direction: "left"
     },
     rainDrops: [],
