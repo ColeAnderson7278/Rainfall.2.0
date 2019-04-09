@@ -63,6 +63,19 @@
     height: 5px;
     margin: 0 3px;
 }
+/* 
+.rolling {
+    transition: rolling;
+}
+
+@keyframes rolling {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+} */
 
 #userHeadband {
     background-color: red;
@@ -124,6 +137,7 @@
 #modalControlInfo p {
     margin: 5px 0;
     font-size: 18px;
+    font-weight: bold;
 }
 
 #modalText:hover,
@@ -170,7 +184,7 @@
 }
 
 #highScoresContainer {
-    margin: 15px;
+    margin: 25px;
     width: 150px;
     color: rgb(15, 15, 15);
 }
@@ -197,15 +211,18 @@
     text-align: center;
 }
 .userInfoContainer {
-    display: flex;
-    justify-content: space-around;
     margin-bottom: 10px;
 }
 
 .userName,
 .userScore {
-    margin: 0;
+    margin: 2px 0;
     font-size: 18px;
+}
+
+.userScore {
+    margin-left: 10px;
+    color: #db2121;
 }
 
 .fas {
