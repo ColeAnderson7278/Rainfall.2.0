@@ -23,6 +23,7 @@ class App extends React.Component {
         this.divRef = React.createRef();
         this.state = START_STATE;
         this.dropTick = setInterval(() => this.tick(), 30);
+        this.dropRainTick = setInterval(() => this.generateRainTick(), 500);
     }
 
     componentDidMount() {
@@ -202,37 +203,37 @@ class App extends React.Component {
         }
     }
 
-    generateRainDrops() {
-        this.setState({
-            rainDrops: _.concat(
-                this.state.rainDrops,
-                {
-                    x: Math.random() * (WIDTH - 16) + 16,
-                    y: 0
-                },
-                {
-                    x: Math.random() * (WIDTH - 16) + 16,
-                    y: 0
-                },
-                {
-                    x: Math.random() * (WIDTH - 16) + 16,
-                    y: 0
-                },
-                {
-                    x: Math.random() * (WIDTH - 16) + 16,
-                    y: 0
-                },
-                {
-                    x: Math.random() * (WIDTH - 16) + 16,
-                    y: 0
-                },
-                {
-                    x: Math.random() * (WIDTH - 16) + 16,
-                    y: 0
-                }
-            )
-        });
-    }
+    // generateRainDrops() {
+    //     this.setState({
+    //         rainDrops: _.concat(
+    //             this.state.rainDrops,
+    //             {
+    //                 x: Math.random() * (WIDTH - 16) + 16,
+    //                 y: 0
+    //             },
+    //             {
+    //                 x: Math.random() * (WIDTH - 16) + 16,
+    //                 y: 0
+    //             },
+    //             {
+    //                 x: Math.random() * (WIDTH - 16) + 16,
+    //                 y: 0
+    //             },
+    //             {
+    //                 x: Math.random() * (WIDTH - 16) + 16,
+    //                 y: 0
+    //             },
+    //             {
+    //                 x: Math.random() * (WIDTH - 16) + 16,
+    //                 y: 0
+    //             },
+    //             {
+    //                 x: Math.random() * (WIDTH - 16) + 16,
+    //                 y: 0
+    //             }
+    //         )
+    //     });
+    // }
 
     getTotalRainDrops() {
         var score = this.state.userScore;
@@ -283,29 +284,46 @@ class App extends React.Component {
     }
 
     checkForGameOver() {
-        if (this.state.rainDrops[0].y >= HEIGHT - (USER_HEIGHT + 15)) {
-            for (var drop of this.state.rainDrops) {
-                if (
-                    drop.x + 5 >= this.state.user.locationX &&
-                    drop.x <= this.state.user.locationX + USER_WIDTH
-                ) {
-                    this.setState({
-                        gameOver: true
-                    });
-                }
+        for (var drop of this.state.rainDrops) {
+            if (
+                drop.x + 7 >= this.state.user.locationX &&
+                drop.x <= this.state.user.locationX + USER_WIDTH &&
+                drop.y >= HEIGHT - USER_HEIGHT - 16
+            ) {
+                this.setState({
+                    gameOver: true
+                });
             }
         }
     }
 
-    tick() {
-        if (this.state.rainDrops.length == 0) {
-            this.generateRainDrops();
+    generateRainDrop() {
+        this.setState({
+            rainDrops: _.concat(this.state.rainDrops, {
+                x: Math.random() * (WIDTH - 16) + 16,
+                y: 0
+            })
+        });
+    }
+
+    checkRainDrops() {
+        this.setState({
+            rainDrops: this.state.rainDrops.filter(
+                drop => drop.y <= HEIGHT - 15
+            )
+        });
+    }
+
+    generateRainTick() {
+        if (this.state.rainDrops.length >= 0) {
+            this.generateRainDrop();
         }
+    }
+
+    tick() {
         this.checkForGameOver();
         if (!this.state.gameOver) {
-            if (this.state.rainDrops[0].y > HEIGHT - 20) {
-                this.resetRainDrops();
-            }
+            this.checkRainDrops();
             this.addPoints();
             this.dropRain();
         }
