@@ -57,7 +57,7 @@ class App extends React.Component {
                 onKeyDown={event => (
                     this.movePlayer(event), this.restartGame(event)
                 )}
-                onKeyUp={event => this.slidePlayer(event)}
+                onKeyUp={event => this.rollPlayer(event)}
             >
                 <div id="highScoreGameAreaContainer">
                     <div>
@@ -124,7 +124,17 @@ class App extends React.Component {
                 this.state.user.direction = "left";
                 if (this.state.user.locationX >= MOVEMENT_DISTANCE) {
                     this.setState({
-                        userLocationX: (this.state.user.locationX -= MOVEMENT_DISTANCE)
+                        user: {
+                            locationX: (this.state.user.locationX -= MOVEMENT_DISTANCE),
+                            direction: "left"
+                        }
+                    });
+                } else {
+                    this.setState({
+                        user: {
+                            locationX: 0,
+                            direction: "left"
+                        }
                     });
                 }
             } else if (event.keyCode == 39) {
@@ -134,14 +144,24 @@ class App extends React.Component {
                     WIDTH - USER_WIDTH - MOVEMENT_DISTANCE
                 ) {
                     this.setState({
-                        userLocationX: (this.state.user.locationX += MOVEMENT_DISTANCE)
+                        user: {
+                            locationX: (this.state.user.locationX += MOVEMENT_DISTANCE),
+                            direction: "right"
+                        }
+                    });
+                } else {
+                    this.setState({
+                        user: {
+                            locationX: WIDTH - USER_WIDTH,
+                            direction: "right"
+                        }
                     });
                 }
             }
         }
     }
 
-    slidePlayer(event) {
+    rollPlayer(event) {
         if (!this.state.gameOver) {
             if (event.keyCode == 40) {
                 if (this.state.user.direction == "left") {

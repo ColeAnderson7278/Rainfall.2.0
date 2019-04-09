@@ -4,6 +4,13 @@
     margin-right: auto;
 }
 
+#appContainer p {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 #highScoreGameAreaContainer {
     display: flex;
 }
@@ -106,6 +113,13 @@
     -webkit-animation-duration: 0.8s;
     animation-name: drop;
     animation-duration: 0.8s;
+}
+
+#gameModal {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .curtain {
