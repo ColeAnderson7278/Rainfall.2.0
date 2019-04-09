@@ -170,22 +170,31 @@ class App extends React.Component {
                         WIDTH - USER_WIDTH - SLIDE_DISTANCE
                     ) {
                         this.setState({
-                            userLocationX: (this.state.user.locationX += SLIDE_DISTANCE)
+                            user: {
+                                locationX: (this.state.user.locationX += SLIDE_DISTANCE),
+                                direction: "left"
+                            }
                         });
                     } else {
                         this.setState({
-                            userLocationX: WIDTH - USER_WIDTH
+                            user: {
+                                locationX: WIDTH - USER_WIDTH,
+                                direction: "left"
+                            }
                         });
                     }
                 } else if (this.state.user.direction == "right") {
                     if (this.state.user.locationX >= SLIDE_DISTANCE) {
                         this.setState({
-                            userLocationX: (this.state.user.locationX -= SLIDE_DISTANCE)
+                            user: {
+                                locationX: (this.state.user.locationX -= SLIDE_DISTANCE),
+                                direction: "right"
+                            }
                         });
                     } else {
                         highScores: [];
                         this.setState({
-                            userLocationX: 0
+                            user: { locationX: 0, direction: "right" }
                         });
                     }
                 }
