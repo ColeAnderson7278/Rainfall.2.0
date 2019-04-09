@@ -1,7 +1,7 @@
 const HEIGHT = 300,
     WIDTH = 500,
     MOVEMENT_DISTANCE = 8,
-    SLIDE_DISTANCE = 24,
+    SLIDE_DISTANCE = 32,
     USER_HEIGHT = 25,
     USER_WIDTH = 25;
 
@@ -23,7 +23,7 @@ class App extends React.Component {
         this.divRef = React.createRef();
         this.state = START_STATE;
         this.dropTick = setInterval(() => this.tick(), 30);
-        this.dropRainTick = setInterval(() => this.generateRainTick(), 500);
+        this.dropRainTick = setInterval(() => this.generateRainTick(), 250);
     }
 
     componentDidMount() {
@@ -96,7 +96,6 @@ class App extends React.Component {
                     <div>
                         <div id="highScoresContainer">
                             <p id="highScoreHeader">High Scores:</p>
-                            <hr />
                             {this.state.highScores.map((score, key) => (
                                 <HighScore
                                     key={key}
@@ -201,66 +200,6 @@ class App extends React.Component {
                 }
             }
         }
-    }
-
-    // generateRainDrops() {
-    //     this.setState({
-    //         rainDrops: _.concat(
-    //             this.state.rainDrops,
-    //             {
-    //                 x: Math.random() * (WIDTH - 16) + 16,
-    //                 y: 0
-    //             },
-    //             {
-    //                 x: Math.random() * (WIDTH - 16) + 16,
-    //                 y: 0
-    //             },
-    //             {
-    //                 x: Math.random() * (WIDTH - 16) + 16,
-    //                 y: 0
-    //             },
-    //             {
-    //                 x: Math.random() * (WIDTH - 16) + 16,
-    //                 y: 0
-    //             },
-    //             {
-    //                 x: Math.random() * (WIDTH - 16) + 16,
-    //                 y: 0
-    //             },
-    //             {
-    //                 x: Math.random() * (WIDTH - 16) + 16,
-    //                 y: 0
-    //             }
-    //         )
-    //     });
-    // }
-
-    getTotalRainDrops() {
-        var score = this.state.userScore;
-        if (score < 2500) {
-            return 6;
-        } else if (score < 5000) {
-            return 8;
-        } else if (score < 7500) {
-            return 10;
-        } else if (score < 10000) {
-            return 12;
-        } else {
-            return 15;
-        }
-    }
-
-    resetRainDrops() {
-        var resetDrops = [];
-        for (var i = 0; i < this.getTotalRainDrops(); i++) {
-            resetDrops.push({
-                x: Math.random() * (WIDTH - 16 - 16) + 16,
-                y: 0
-            });
-        }
-        this.setState({
-            rainDrops: resetDrops
-        });
     }
 
     dropRain() {
