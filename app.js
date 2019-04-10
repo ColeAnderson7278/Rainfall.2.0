@@ -1,20 +1,21 @@
 const HEIGHT = 300,
     WIDTH = 500,
     MOVEMENT_DISTANCE = 8,
-    SLIDE_DISTANCE = 32,
-    USER_HEIGHT = 25,
-    USER_WIDTH = 25;
+    SLIDE_DISTANCE = 40,
+    USER_HEIGHT = 28,
+    USER_WIDTH = 28;
 
 const START_STATE = {
     gameOver: false,
     formSubmitted: false,
     user: {
-        locationX: WIDTH / 2 - USER_WIDTH / 2,
+        locationX: 250 - USER_WIDTH / 2,
         direction: "left"
     },
     rainDrops: [],
     userScore: 0,
-    highScores: []
+    highScores: [],
+    isRolling: false
 };
 
 class App extends React.Component {
@@ -58,7 +59,9 @@ class App extends React.Component {
                 onKeyDown={event => (
                     this.movePlayer(event), this.restartGame(event)
                 )}
-                onKeyUp={event => this.rollPlayer(event)}
+                onKeyUp={event => (
+                    this.rollPlayer(event), this.stopRoll(event)
+                )}
             >
                 <div id="highScoreGameAreaContainer">
                     <div>
@@ -75,6 +78,7 @@ class App extends React.Component {
                                 userHeight={USER_HEIGHT}
                                 userWidth={USER_WIDTH}
                                 direction={this.state.user.direction}
+                                isRolling={this.state.isRolling}
                             />
                             <div id="modalContainer">
                                 <Modal isGameOver={this.state.gameOver} />
@@ -173,14 +177,16 @@ class App extends React.Component {
                             user: {
                                 locationX: (this.state.user.locationX += SLIDE_DISTANCE),
                                 direction: "left"
-                            }
+                            },
+                            isRolling: true
                         });
                     } else {
                         this.setState({
                             user: {
                                 locationX: WIDTH - USER_WIDTH,
                                 direction: "left"
-                            }
+                            },
+                            isRolling: true
                         });
                     }
                 } else if (this.state.user.direction == "right") {
@@ -189,16 +195,27 @@ class App extends React.Component {
                             user: {
                                 locationX: (this.state.user.locationX -= SLIDE_DISTANCE),
                                 direction: "right"
-                            }
+                            },
+                            isRolling: true
                         });
                     } else {
-                        highScores: [];
                         this.setState({
-                            user: { locationX: 0, direction: "right" }
+                            user: { locationX: 0, direction: "right" },
+                            isRolling: true
                         });
                     }
                 }
             }
+        }
+    }
+
+    stopRoll(event) {
+        if (event.keyCode == 40) {
+            setTimeout(() => {
+                this.setState({
+                    isRolling: false
+                });
+            }, 200);
         }
     }
 
@@ -248,7 +265,7 @@ class App extends React.Component {
     checkRainDrops() {
         this.setState({
             rainDrops: this.state.rainDrops.filter(
-                drop => drop.y <= HEIGHT - 15
+                drop => drop.y <= HEIGHT - 16
             )
         });
     }
@@ -274,16 +291,54 @@ class App extends React.Component {
     }
 }
 
-function User({ userHeight, userWidth, locationX, direction }) {
-    return (
-        <div
-            style={{ height: userHeight, width: userWidth, left: locationX }}
-            id="userIcon"
-        >
-            <div id="userHeadband" />
-            <div style={{ float: direction }} id="userEye" />
-        </div>
-    );
+function User({ userHeight, userWidth, locationX, direction, isRolling }) {
+    if (!isRolling) {
+        return (
+            <div
+                style={{
+                    height: userHeight,
+                    width: userWidth,
+                    left: locationX
+                }}
+                id="userIcon"
+            >
+                <div id="userHeadband" />
+                <div style={{ float: direction }} id="userEye" />
+            </div>
+        );
+    } else {
+        if (direction == "left") {
+            return (
+                <div
+                    className="rollingLeft"
+                    style={{
+                        height: userHeight,
+                        width: userWidth,
+                        left: locationX
+                    }}
+                    id="userIcon"
+                >
+                    <div id="userHeadband" />
+                    <div style={{ float: direction }} id="userEye" />
+                </div>
+            );
+        } else {
+            return (
+                <div
+                    className="rollingRight"
+                    style={{
+                        height: userHeight,
+                        width: userWidth,
+                        left: locationX
+                    }}
+                    id="userIcon"
+                >
+                    <div id="userHeadband" />
+                    <div style={{ float: direction }} id="userEye" />
+                </div>
+            );
+        }
+    }
 }
 
 function RainDrop({ x, y }) {
@@ -299,7 +354,7 @@ function Modal({ isGameOver }) {
                 {Array(12).fill(<div className="curtain" />)}
                 <p id="modalText">Game Over</p>
                 <div id="modalControlInfo">
-                    <i class="fas fa-arrow-up" />
+                    <i className="fas fa-arrow-up" />
                     <p>To Reset Game</p>
                 </div>
             </div>
@@ -369,15 +424,15 @@ function Controls() {
     return (
         <div id="controlsContainer">
             <div id="controlsInfo">
-                <i class="fas fa-arrow-left" />
+                <i className="fas fa-arrow-left" />
                 <p>Move Left</p>
             </div>
             <div id="controlsInfo">
-                <i class="fas fa-arrow-down" />
+                <i className="fas fa-arrow-down" />
                 <p>Back Roll</p>
             </div>
             <div id="controlsInfo">
-                <i class="fas fa-arrow-right" />
+                <i className="fas fa-arrow-right" />
                 <p>Move Right</p>
             </div>
         </div>

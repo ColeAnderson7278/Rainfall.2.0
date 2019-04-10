@@ -11,10 +11,6 @@
     user-select: none;
 }
 
-#highScoreGameAreaContainer {
-    /* display: flex; */
-}
-
 #appContainer:hover,
 #appContainer:active,
 #appContainer:focus {
@@ -37,6 +33,7 @@
 #userArea {
     display: flex;
     background-image: radial-gradient(rgb(196, 170, 123), rgb(155, 123, 64));
+    overflow: hidden;
     position: relative;
     margin-left: auto;
     margin-right: auto;
@@ -58,7 +55,8 @@
 
 #userIcon {
     background-color: rgb(20, 20, 20);
-    border-radius: 2px;
+    border-radius: 5px;
+    overflow: hidden;
     position: absolute;
     bottom: 0;
 }
@@ -70,19 +68,42 @@
     height: 5px;
     margin: 0 3px;
 }
-/* 
-.rolling {
-    transition: rolling;
+.rollingRight,
+.rollingLeft {
+    animation-duration: 200ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
 }
 
-@keyframes rolling {
+.rollingLeft {
+    animation-name: spinLeft;
+}
+
+.rollingRight {
+    animation-name: spinRight;
+}
+
+@keyframes spinLeft {
     from {
+        border-radius: 25px;
         transform: rotate(0deg);
     }
     to {
+        border-radius: 0px;
         transform: rotate(360deg);
     }
-} */
+}
+
+@keyframes spinRight {
+    from {
+        border-radius: 25px;
+        transform: rotate(0deg);
+    }
+    to {
+        border-radius: 0px;
+        transform: rotate(-360deg);
+    }
+}
 
 #userHeadband {
     background-color: red;
