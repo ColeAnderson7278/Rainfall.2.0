@@ -15,7 +15,8 @@ const START_STATE = {
     rainDrops: [],
     userScore: 0,
     highScores: [],
-    isRolling: false
+    isRolling: false,
+    deathAudioRan: false
 };
 
 class App extends React.Component {
@@ -41,6 +42,16 @@ class App extends React.Component {
 
     scoreSubmitted() {
         this.setState({ formSubmitted: true });
+    }
+
+    charDeathAudio() {
+        let audio = new Audio("audio_folder/char_death_sound_effect.mp3");
+        return audio.play();
+    }
+
+    rollAudio() {
+        let audio = new Audio("audio_folder/roll_sound_effect.mp3");
+        return audio.play();
     }
 
     render() {
@@ -97,18 +108,7 @@ class App extends React.Component {
                             )}
                         />
                     </div>
-                    <div>
-                        <div id="highScoresContainer">
-                            <p id="highScoreHeader">High Scores:</p>
-                            {this.state.highScores.map((score, key) => (
-                                <HighScore
-                                    key={key}
-                                    name={score.name}
-                                    number={score.number}
-                                />
-                            ))}
-                        </div>
-                    </div>
+                    <HighScoreContainer highScores={this.state.highScores} />
                 </div>
             </div>
         );
@@ -173,6 +173,7 @@ class App extends React.Component {
                         this.state.user.locationX <=
                         WIDTH - USER_WIDTH - SLIDE_DISTANCE
                     ) {
+                        this.rollAudio();
                         this.setState({
                             user: {
                                 locationX: (this.state.user.locationX += SLIDE_DISTANCE),
@@ -181,6 +182,7 @@ class App extends React.Component {
                             isRolling: true
                         });
                     } else {
+                        this.rollAudio();
                         this.setState({
                             user: {
                                 locationX: WIDTH - USER_WIDTH,
@@ -191,6 +193,7 @@ class App extends React.Component {
                     }
                 } else if (this.state.user.direction == "right") {
                     if (this.state.user.locationX >= SLIDE_DISTANCE) {
+                        this.rollAudio();
                         this.setState({
                             user: {
                                 locationX: (this.state.user.locationX -= SLIDE_DISTANCE),
@@ -199,6 +202,7 @@ class App extends React.Component {
                             isRolling: true
                         });
                     } else {
+                        this.rollAudio();
                         this.setState({
                             user: { locationX: 0, direction: "right" },
                             isRolling: true
@@ -264,9 +268,7 @@ class App extends React.Component {
 
     checkRainDrops() {
         this.setState({
-            rainDrops: this.state.rainDrops.filter(
-                drop => drop.y <= HEIGHT - 16
-            )
+            rainDrops: this.state.rainDrops.filter(drop => drop.y < HEIGHT - 16)
         });
     }
 
@@ -282,6 +284,11 @@ class App extends React.Component {
             this.checkRainDrops();
             this.addPoints();
             this.dropRain();
+        } else if (this.state.gameOver && !this.state.deathAudioRan) {
+            this.charDeathAudio();
+            this.setState({
+                deathAudioRan: true
+            });
         }
     }
 
@@ -416,6 +423,23 @@ function HighScore({ name, number }) {
         <div className="userInfoContainer">
             <p className="userName">{name}</p>
             <p className="userScore">{number}</p>
+        </div>
+    );
+}
+
+function HighScoreContainer({ highScores }) {
+    return (
+        <div>
+            <div id="highScoresContainer">
+                <p id="highScoreHeader">High Scores:</p>
+                {highScores.map((score, key) => (
+                    <HighScore
+                        key={key}
+                        name={score.name}
+                        number={score.number}
+                    />
+                ))}
+            </div>
         </div>
     );
 }
