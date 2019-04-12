@@ -13,9 +13,11 @@ const START_STATE = {
         direction: "left"
     },
     rainDrops: [],
+    powerUps: [],
     userScore: 0,
     highScores: [],
     isRolling: false,
+    userHasHealth: false,
     deathAudioRan: false
 };
 
@@ -26,6 +28,10 @@ class App extends React.Component {
         this.state = START_STATE;
         this.dropTick = setInterval(() => this.tick(), 30);
         this.dropRainTick = setInterval(() => this.generateRainTick(), 250);
+        this.dropPowerUpTick = setInterval(
+            () => this.generatePowerUpsTick(),
+            2500
+        );
     }
 
     componentDidMount() {
@@ -83,6 +89,17 @@ class App extends React.Component {
                             <Controls />
                             {this.state.rainDrops.map((drop, key) => (
                                 <RainDrop key={key} x={drop.x} y={drop.y} />
+                            ))}
+                            <PowerUpDisplay
+                                userHasHealth={this.state.userHasHealth}
+                            />
+                            <Controls />
+                            {this.state.powerUps.map((powerUp, key) => (
+                                <PowerUp
+                                    key={key}
+                                    x={powerUp.x}
+                                    y={powerUp.y}
+                                />
                             ))}
                             <User
                                 locationX={this.state.user.locationX}
@@ -236,6 +253,19 @@ class App extends React.Component {
         });
     }
 
+    dropPowerUp() {
+        var updatedPowerUps = [];
+        for (var powerUp of this.state.powerUps) {
+            updatedPowerUps.push({
+                x: powerUp.x,
+                y: (powerUp.y += 5)
+            });
+        }
+        this.setState({
+            powerUps: updatedPowerUps
+        });
+    }
+
     addPoints() {
         var originalScore = this.state.userScore;
         this.setState({
@@ -243,15 +273,58 @@ class App extends React.Component {
         });
     }
 
+    didDropHit(x, y) {
+        if (
+            x + 7 >= this.state.user.locationX &&
+            x <= this.state.user.locationX + USER_WIDTH &&
+            y >= HEIGHT - USER_HEIGHT - 16
+        ) {
+            return true;
+        } else {
+            false;
+        }
+    }
+
     checkForGameOver() {
         for (var drop of this.state.rainDrops) {
-            if (
-                drop.x + 7 >= this.state.user.locationX &&
-                drop.x <= this.state.user.locationX + USER_WIDTH &&
-                drop.y >= HEIGHT - USER_HEIGHT - 16
-            ) {
+            if (this.didDropHit(drop.x, drop.y) && !this.state.userHasHealth) {
                 this.setState({
                     gameOver: true
+                });
+            } else if (
+                this.didDropHit(drop.x, drop.y) &&
+                this.state.userHasHealth
+            ) {
+                this.setState({
+                    rainDrops: this.state.rainDrops.filter(
+                        drop => !this.didDropHit(drop.x, drop.y)
+                    ),
+                    userHasHealth: false
+                });
+            }
+        }
+    }
+
+    didPowerUpHit(x, y) {
+        if (
+            x + 24 >= this.state.user.locationX &&
+            x <= this.state.user.locationX + USER_WIDTH &&
+            y >= HEIGHT - USER_HEIGHT - 24
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    checkForAcquiredPowerUp() {
+        for (var powerUp of this.state.powerUps) {
+            if (this.didPowerUpHit(powerUp.x, powerUp.y)) {
+                this.setState({
+                    powerUps: this.state.powerUps.filter(
+                        powerUp => !this.didPowerUpHit(powerUp.x, powerUp.y)
+                    ),
+                    userHasHealth: true
                 });
             }
         }
@@ -266,9 +339,26 @@ class App extends React.Component {
         });
     }
 
+    generatePowerUp() {
+        this.setState({
+            powerUps: _.concat(this.state.powerUps, {
+                x: Math.random() * (WIDTH - 16) + 16,
+                y: 0
+            })
+        });
+    }
+
     checkRainDrops() {
         this.setState({
             rainDrops: this.state.rainDrops.filter(drop => drop.y < HEIGHT - 16)
+        });
+    }
+
+    checkPowerUps() {
+        this.setState({
+            powerUps: this.state.powerUps.filter(
+                powerUp => powerUp.y < HEIGHT - 24
+            )
         });
     }
 
@@ -278,12 +368,21 @@ class App extends React.Component {
         }
     }
 
+    generatePowerUpsTick() {
+        if (this.state.powerUps.length >= 0) {
+            this.generatePowerUp();
+        }
+    }
+
     tick() {
         this.checkForGameOver();
+        this.checkForAcquiredPowerUp();
         if (!this.state.gameOver) {
             this.checkRainDrops();
+            this.checkPowerUps();
             this.addPoints();
             this.dropRain();
+            this.dropPowerUp();
         } else if (this.state.gameOver && !this.state.deathAudioRan) {
             this.charDeathAudio();
             this.setState({
@@ -461,6 +560,27 @@ function Controls() {
             </div>
         </div>
     );
+}
+
+function PowerUp({ x, y }) {
+    return (
+        <div style={{ left: x, top: y }} className="powerUp">
+            <div class="bar horizontal" />
+            <div class="bar vertical" />
+        </div>
+    );
+}
+
+function PowerUpDisplay({ userHasHealth }) {
+    if (userHasHealth) {
+        return (
+            <div id="powerUpDisplayContainer">
+                <p>Yes</p>
+            </div>
+        );
+    } else {
+        return <div id="powerUpDisplayContainer" />;
+    }
 }
 
 ReactDOM.render(<App />, document.getElementById("root"));

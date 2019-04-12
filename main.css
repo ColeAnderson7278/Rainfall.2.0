@@ -1,3 +1,7 @@
+/* body {
+    background-color: palegoldenrod;
+} */
+
 #appContainer {
     width: 100%;
     margin-left: auto;
@@ -122,6 +126,34 @@
     background-color: dodgerblue;
 }
 
+.powerUp {
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+    position: absolute;
+    background-color: rgb(255, 0, 0);
+}
+
+.bar {
+    margin: 0 auto;
+    position: absolute;
+    background-color: #fff;
+}
+
+.horizontal {
+    width: 70%;
+    height: 22%;
+    left: 15%;
+    top: 40%;
+}
+
+.vertical {
+    width: 22%;
+    height: 70%;
+    left: 40%;
+    top: 15%;
+}
+
 #gameModal {
     z-index: 1;
     position: absolute;
@@ -216,6 +248,10 @@
 #scoreFormSubmitBtn:hover {
     cursor: pointer;
     background-color: rgb(190, 97, 97);
+}
+
+#powerUpDisplayContainer {
+    position: absolute;
 }
 
 #controlsContainer {
