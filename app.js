@@ -17,7 +17,7 @@ const START_STATE = {
     userScore: 0,
     highScores: [],
     isRolling: false,
-    userHasHealth: false,
+    userHealthAmount: 0,
     deathAudioRan: false
 };
 
@@ -91,7 +91,7 @@ class App extends React.Component {
                                 <RainDrop key={key} x={drop.x} y={drop.y} />
                             ))}
                             <PowerUpDisplay
-                                userHasHealth={this.state.userHasHealth}
+                                userHealthAmount={this.state.userHealthAmount}
                             />
                             <Controls />
                             {this.state.powerUps.map((powerUp, key) => (
@@ -258,7 +258,7 @@ class App extends React.Component {
         for (var powerUp of this.state.powerUps) {
             updatedPowerUps.push({
                 x: powerUp.x,
-                y: (powerUp.y += 5)
+                y: (powerUp.y += 3)
             });
         }
         this.setState({
@@ -287,19 +287,22 @@ class App extends React.Component {
 
     checkForGameOver() {
         for (var drop of this.state.rainDrops) {
-            if (this.didDropHit(drop.x, drop.y) && !this.state.userHasHealth) {
+            if (
+                this.didDropHit(drop.x, drop.y) &&
+                this.state.userHealthAmount <= 0
+            ) {
                 this.setState({
                     gameOver: true
                 });
             } else if (
                 this.didDropHit(drop.x, drop.y) &&
-                this.state.userHasHealth
+                this.state.userHealthAmount > 0
             ) {
                 this.setState({
                     rainDrops: this.state.rainDrops.filter(
                         drop => !this.didDropHit(drop.x, drop.y)
                     ),
-                    userHasHealth: false
+                    userHealthAmount: this.state.userHealthAmount - 1
                 });
             }
         }
@@ -324,7 +327,7 @@ class App extends React.Component {
                     powerUps: this.state.powerUps.filter(
                         powerUp => !this.didPowerUpHit(powerUp.x, powerUp.y)
                     ),
-                    userHasHealth: true
+                    userHealthAmount: this.state.userHealthAmount + 1
                 });
             }
         }
@@ -571,15 +574,19 @@ function PowerUp({ x, y }) {
     );
 }
 
-function PowerUpDisplay({ userHasHealth }) {
-    if (userHasHealth) {
+function PowerUpDisplay({ userHealthAmount }) {
+    if (userHealthAmount > 0) {
         return (
             <div id="powerUpDisplayContainer">
-                <p>Yes</p>
+                <i class="fas fa-heart" />
             </div>
         );
     } else {
-        return <div id="powerUpDisplayContainer" />;
+        return (
+            <div id="powerUpDisplayContainer">
+                <i class="far fa-heart" />
+            </div>
+        );
     }
 }
 
