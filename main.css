@@ -252,6 +252,20 @@
 
 #powerUpDisplayContainer {
     position: absolute;
+    display: flex;
+    margin: 10px;
+}
+
+#userHealthIndicator {
+    margin: 4px;
+    font-size: 22px;
+    color: rgba(0, 0, 0, 0.75);
+}
+
+#heartIcon {
+    margin: 4px;
+    color: rgba(255, 0, 0, 0.75);
+    font-size: 26px;
 }
 
 #controlsContainer {
@@ -300,6 +314,9 @@
     color: #db2121;
 }
 
-.fas {
+.fa-arrow-up,
+.fa-arrow-down,
+.fa-arrow-left,
+.fa-arrow-right {
     font-size: 25px;
 }

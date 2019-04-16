@@ -575,19 +575,12 @@ function PowerUp({ x, y }) {
 }
 
 function PowerUpDisplay({ userHealthAmount }) {
-    if (userHealthAmount > 0) {
-        return (
-            <div id="powerUpDisplayContainer">
-                <i class="fas fa-heart" />
-            </div>
-        );
-    } else {
-        return (
-            <div id="powerUpDisplayContainer">
-                <i class="far fa-heart" />
-            </div>
-        );
-    }
+    return (
+        <div id="powerUpDisplayContainer">
+            <i id="heartIcon" class="fas fa-heart" />
+            <p id="userHealthIndicator">x{userHealthAmount}</p>
+        </div>
+    );
 }
 
 ReactDOM.render(<App />, document.getElementById("root"));
