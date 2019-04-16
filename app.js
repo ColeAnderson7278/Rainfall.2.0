@@ -60,6 +60,16 @@ class App extends React.Component {
         return audio.play();
     }
 
+    hitAudio() {
+        let audio = new Audio("audio_folder/hit_sound_effect.mp3");
+        return audio.play();
+    }
+
+    collectAudio() {
+        let audio = new Audio("audio_folder/collect_sound_effect.mp3");
+        return audio.play();
+    }
+
     render() {
         var userAreaStyle = {
             width: WIDTH + "px",
@@ -298,6 +308,7 @@ class App extends React.Component {
                 this.didDropHit(drop.x, drop.y) &&
                 this.state.userHealthAmount > 0
             ) {
+                this.hitAudio();
                 this.setState({
                     rainDrops: this.state.rainDrops.filter(
                         drop => !this.didDropHit(drop.x, drop.y)
@@ -326,6 +337,7 @@ class App extends React.Component {
                 this.didPowerUpHit(powerUp.x, powerUp.y) &&
                 this.state.userHealthAmount < 3
             ) {
+                this.collectAudio();
                 this.setState({
                     powerUps: this.state.powerUps.filter(
                         powerUp => !this.didPowerUpHit(powerUp.x, powerUp.y)
