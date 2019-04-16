@@ -30,7 +30,7 @@ class App extends React.Component {
         this.dropRainTick = setInterval(() => this.generateRainTick(), 250);
         this.dropPowerUpTick = setInterval(
             () => this.generatePowerUpsTick(),
-            2500
+            12500
         );
     }
 
@@ -322,12 +322,21 @@ class App extends React.Component {
 
     checkForAcquiredPowerUp() {
         for (var powerUp of this.state.powerUps) {
-            if (this.didPowerUpHit(powerUp.x, powerUp.y)) {
+            if (
+                this.didPowerUpHit(powerUp.x, powerUp.y) &&
+                this.state.userHealthAmount < 3
+            ) {
                 this.setState({
                     powerUps: this.state.powerUps.filter(
                         powerUp => !this.didPowerUpHit(powerUp.x, powerUp.y)
                     ),
                     userHealthAmount: this.state.userHealthAmount + 1
+                });
+            } else {
+                this.setState({
+                    powerUps: this.state.powerUps.filter(
+                        powerUp => !this.didPowerUpHit(powerUp.x, powerUp.y)
+                    )
                 });
             }
         }
