@@ -521,7 +521,7 @@ class ScoreForm extends React.Component {
                         <input
                             required
                             id="playerNameInput"
-                            placeholder="Enter name then submit or hit restart key"
+                            placeholder="Enter name then submit or reset the game"
                             minLength="1"
                             maxLength="10"
                             type="text"
