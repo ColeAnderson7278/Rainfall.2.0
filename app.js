@@ -50,26 +50,6 @@ class App extends React.Component {
         this.setState({ formSubmitted: true });
     }
 
-    charDeathAudio() {
-        let audio = new Audio("audio_folder/char_death_sound_effect.mp3");
-        return audio.play();
-    }
-
-    rollAudio() {
-        let audio = new Audio("audio_folder/roll_sound_effect.mp3");
-        return audio.play();
-    }
-
-    hitAudio() {
-        let audio = new Audio("audio_folder/hit_sound_effect.mp3");
-        return audio.play();
-    }
-
-    collectAudio() {
-        let audio = new Audio("audio_folder/collect_sound_effect.mp3");
-        return audio.play();
-    }
-
     render() {
         var userAreaStyle = {
             width: WIDTH + "px",
@@ -200,7 +180,7 @@ class App extends React.Component {
                         this.state.user.locationX <=
                         WIDTH - USER_WIDTH - SLIDE_DISTANCE
                     ) {
-                        this.rollAudio();
+                        AudioPlayer.rollAudio();
                         this.setState({
                             user: {
                                 locationX: (this.state.user.locationX += SLIDE_DISTANCE),
@@ -209,7 +189,7 @@ class App extends React.Component {
                             isRolling: true
                         });
                     } else {
-                        this.rollAudio();
+                        AudioPlayer.rollAudio();
                         this.setState({
                             user: {
                                 locationX: WIDTH - USER_WIDTH,
@@ -220,7 +200,7 @@ class App extends React.Component {
                     }
                 } else if (this.state.user.direction == "right") {
                     if (this.state.user.locationX >= SLIDE_DISTANCE) {
-                        this.rollAudio();
+                        AudioPlayer.rollAudio();
                         this.setState({
                             user: {
                                 locationX: (this.state.user.locationX -= SLIDE_DISTANCE),
@@ -229,7 +209,7 @@ class App extends React.Component {
                             isRolling: true
                         });
                     } else {
-                        this.rollAudio();
+                        AudioPlayer.rollAudio();
                         this.setState({
                             user: { locationX: 0, direction: "right" },
                             isRolling: true
@@ -308,7 +288,7 @@ class App extends React.Component {
                 this.didDropHit(drop.x, drop.y) &&
                 this.state.userHealthAmount > 0
             ) {
-                this.hitAudio();
+                AudioPlayer.hitAudio();
                 this.setState({
                     rainDrops: this.state.rainDrops.filter(
                         drop => !this.didDropHit(drop.x, drop.y)
@@ -337,7 +317,7 @@ class App extends React.Component {
                 this.didPowerUpHit(powerUp.x, powerUp.y) &&
                 this.state.userHealthAmount < 3
             ) {
-                this.collectAudio();
+                AudioPlayer.collectAudio();
                 this.setState({
                     powerUps: this.state.powerUps.filter(
                         powerUp => !this.didPowerUpHit(powerUp.x, powerUp.y)
@@ -408,7 +388,7 @@ class App extends React.Component {
             this.dropRain();
             this.dropPowerUp();
         } else if (this.state.gameOver && !this.state.deathAudioRan) {
-            this.charDeathAudio();
+            AudioPlayer.charDeathAudio();
             this.setState({
                 deathAudioRan: true
             });
@@ -468,6 +448,28 @@ function User({ userHeight, userWidth, locationX, direction, isRolling }) {
                 </div>
             );
         }
+    }
+}
+
+class AudioPlayer extends React.Component {
+    static charDeathAudio() {
+        let audio = new Audio("audio_folder/char_death_sound_effect.mp3");
+        return audio.play();
+    }
+
+    static rollAudio() {
+        let audio = new Audio("audio_folder/roll_sound_effect.mp3");
+        return audio.play();
+    }
+
+    static hitAudio() {
+        let audio = new Audio("audio_folder/hit_sound_effect.mp3");
+        return audio.play();
+    }
+
+    static collectAudio() {
+        let audio = new Audio("audio_folder/collect_sound_effect.mp3");
+        return audio.play();
     }
 }
 
