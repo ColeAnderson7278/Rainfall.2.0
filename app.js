@@ -3,9 +3,9 @@ const HEIGHT = 300,
     RAIN_WIDTH = 7,
     RAIN_HEIGHT = 16,
     RAIN_FALL_DISTANCE = 5,
-    POWER_UP_WIDTH = 24,
-    POWER_UP_HEIGHT = 24,
-    POWER_UP_FALL_DISTANCE = 3,
+    HEALTH_PACK_WIDTH = 24,
+    HEALTH_PACK_HEIGHT = 24,
+    HEALTH_PACK_FALL_DISTANCE = 3,
     MOVEMENT_DISTANCE = 8,
     SLIDE_DISTANCE = 40,
     USER_HEIGHT = 28,
@@ -19,7 +19,7 @@ const START_STATE = {
         direction: "left"
     },
     rainDrops: [],
-    powerUps: [],
+    healthPacks: [],
     userScore: 0,
     highScores: [],
     isRolling: false,
@@ -34,8 +34,8 @@ class App extends React.Component {
         this.state = START_STATE;
         this.dropTick = setInterval(() => this.tick(), 30);
         this.dropRainTick = setInterval(() => this.generateRainTick(), 300);
-        this.dropPowerUpTick = setInterval(
-            () => this.generatePowerUpsTick(),
+        this.dropHealthPackTick = setInterval(
+            () => this.generateHealthPackTick(),
             12500
         );
     }
@@ -92,17 +92,17 @@ class App extends React.Component {
                                     height={RAIN_HEIGHT}
                                 />
                             ))}
-                            <PowerUpDisplay
+                            <HealthPackDisplay
                                 userHealthAmount={this.state.userHealthAmount}
                             />
                             <Controls />
-                            {this.state.powerUps.map((powerUp, key) => (
-                                <PowerUp
+                            {this.state.healthPacks.map((health, key) => (
+                                <HealthPack
                                     key={key}
-                                    x={powerUp.x}
-                                    y={powerUp.y}
-                                    height={POWER_UP_HEIGHT}
-                                    width={POWER_UP_WIDTH}
+                                    x={health.x}
+                                    y={health.y}
+                                    height={HEALTH_PACK_HEIGHT}
+                                    width={HEALTH_PACK_WIDTH}
                                 />
                             ))}
                             <User
@@ -257,16 +257,16 @@ class App extends React.Component {
         });
     }
 
-    dropPowerUp() {
-        var updatedPowerUps = [];
-        for (var powerUp of this.state.powerUps) {
-            updatedPowerUps.push({
-                x: powerUp.x,
-                y: (powerUp.y += POWER_UP_FALL_DISTANCE)
+    dropHealthPack() {
+        var updatedHealthPacks = [];
+        for (var healthPack of this.state.healthPacks) {
+            updatedHealthPacks.push({
+                x: healthPack.x,
+                y: (healthPack.y += HEALTH_PACK_FALL_DISTANCE)
             });
         }
         this.setState({
-            powerUps: updatedPowerUps
+            healthPacks: updatedHealthPacks
         });
     }
 
@@ -313,11 +313,11 @@ class App extends React.Component {
         }
     }
 
-    didPowerUpHit(x, y) {
+    didHealthPackHit(x, y) {
         if (
-            x + POWER_UP_HEIGHT >= this.state.user.locationX &&
+            x + HEALTH_PACK_HEIGHT >= this.state.user.locationX &&
             x <= this.state.user.locationX + USER_WIDTH &&
-            y >= HEIGHT - USER_HEIGHT - POWER_UP_HEIGHT
+            y >= HEIGHT - USER_HEIGHT - HEALTH_PACK_HEIGHT
         ) {
             return true;
         } else {
@@ -325,23 +325,25 @@ class App extends React.Component {
         }
     }
 
-    checkForAcquiredPowerUp() {
-        for (var powerUp of this.state.powerUps) {
+    checkForAcquiredHealthPack() {
+        for (var healthPack of this.state.healthPacks) {
             if (
-                this.didPowerUpHit(powerUp.x, powerUp.y) &&
+                this.didHealthPackHit(healthPack.x, healthPack.y) &&
                 this.state.userHealthAmount < 3
             ) {
                 AudioPlayer.collectAudio();
                 this.setState({
-                    powerUps: this.state.powerUps.filter(
-                        powerUp => !this.didPowerUpHit(powerUp.x, powerUp.y)
+                    healthPacks: this.state.healthPacks.filter(
+                        healthPack =>
+                            !this.didHealthPackHit(healthPack.x, healthPack.y)
                     ),
                     userHealthAmount: this.state.userHealthAmount + 1
                 });
             } else {
                 this.setState({
-                    powerUps: this.state.powerUps.filter(
-                        powerUp => !this.didPowerUpHit(powerUp.x, powerUp.y)
+                    healthPacks: this.state.healthPacks.filter(
+                        healthPack =>
+                            !this.didHealthPackHit(healthPack.x, healthPack.y)
                     )
                 });
             }
@@ -357,10 +359,12 @@ class App extends React.Component {
         });
     }
 
-    generatePowerUp() {
+    generateHealthPack() {
         this.setState({
-            powerUps: _.concat(this.state.powerUps, {
-                x: Math.random() * (WIDTH - POWER_UP_HEIGHT) + POWER_UP_HEIGHT,
+            healthPacks: _.concat(this.state.healthPacks, {
+                x:
+                    Math.random() * (WIDTH - HEALTH_PACK_HEIGHT) +
+                    HEALTH_PACK_HEIGHT,
                 y: 0
             })
         });
@@ -374,10 +378,10 @@ class App extends React.Component {
         });
     }
 
-    checkPowerUps() {
+    checkHealthPacks() {
         this.setState({
-            powerUps: this.state.powerUps.filter(
-                powerUp => powerUp.y < HEIGHT - POWER_UP_HEIGHT
+            healthPacks: this.state.healthPacks.filter(
+                healthPack => healthPack.y < HEIGHT - HEALTH_PACK_HEIGHT
             )
         });
     }
@@ -388,21 +392,21 @@ class App extends React.Component {
         }
     }
 
-    generatePowerUpsTick() {
-        if (this.state.powerUps.length >= 0) {
-            this.generatePowerUp();
+    generateHealthPacksTick() {
+        if (this.state.healthPacks.length >= 0) {
+            this.generateHealthPack();
         }
     }
 
     tick() {
         this.checkForGameOver();
-        this.checkForAcquiredPowerUp();
+        this.checkForAcquiredHealthPack();
         if (!this.state.gameOver) {
             this.checkRainDrops();
-            this.checkPowerUps();
+            this.checkHealthPacks();
             this.addPoints();
             this.dropRain();
-            this.dropPowerUp();
+            this.dropHealthPack();
         } else if (this.state.gameOver && !this.state.deathAudioRan) {
             AudioPlayer.charDeathAudio();
             this.setState({
@@ -609,11 +613,11 @@ function Controls() {
     );
 }
 
-function PowerUp({ x, y, height, width }) {
+function HealthPack({ x, y, height, width }) {
     return (
         <div
             style={{ left: x, top: y, height: height, width: width }}
-            className="powerUp"
+            className="healthPack"
         >
             <div class="bar horizontal" />
             <div class="bar vertical" />
@@ -621,9 +625,9 @@ function PowerUp({ x, y, height, width }) {
     );
 }
 
-function PowerUpDisplay({ userHealthAmount }) {
+function HealthPackDisplay({ userHealthAmount }) {
     return (
-        <div id="powerUpDisplayContainer">
+        <div id="healthPackDisplayContainer">
             <i id="heartIcon" class="fas fa-heart" />
             <p id="userHealthIndicator">x{userHealthAmount}</p>
         </div>

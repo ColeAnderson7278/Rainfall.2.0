@@ -123,7 +123,7 @@
     background-color: dodgerblue;
 }
 
-.powerUp {
+.healthPack {
     width: 24px;
     height: 24px;
     border-radius: 5px;
@@ -252,7 +252,7 @@
     background-color: rgb(190, 97, 97);
 }
 
-#powerUpDisplayContainer {
+#healthPackDisplayContainer {
     position: absolute;
     display: flex;
     margin: 10px;
