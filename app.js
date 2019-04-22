@@ -27,7 +27,7 @@ class App extends React.Component {
         this.divRef = React.createRef();
         this.state = START_STATE;
         this.dropTick = setInterval(() => this.tick(), 30);
-        this.dropRainTick = setInterval(() => this.generateRainTick(), 250);
+        this.dropRainTick = setInterval(() => this.generateRainTick(), 300);
         this.dropPowerUpTick = setInterval(
             () => this.generatePowerUpsTick(),
             12500
@@ -401,6 +401,28 @@ class App extends React.Component {
     }
 }
 
+class AudioPlayer extends React.Component {
+    static charDeathAudio() {
+        let audio = new Audio("audio_folder/char_death_sound_effect.mp3");
+        return audio.play();
+    }
+
+    static rollAudio() {
+        let audio = new Audio("audio_folder/roll_sound_effect.mp3");
+        return audio.play();
+    }
+
+    static hitAudio() {
+        let audio = new Audio("audio_folder/hit_sound_effect.mp3");
+        return audio.play();
+    }
+
+    static collectAudio() {
+        let audio = new Audio("audio_folder/collect_sound_effect.mp3");
+        return audio.play();
+    }
+}
+
 function User({ userHeight, userWidth, locationX, direction, isRolling }) {
     if (!isRolling) {
         return (
@@ -448,28 +470,6 @@ function User({ userHeight, userWidth, locationX, direction, isRolling }) {
                 </div>
             );
         }
-    }
-}
-
-class AudioPlayer extends React.Component {
-    static charDeathAudio() {
-        let audio = new Audio("audio_folder/char_death_sound_effect.mp3");
-        return audio.play();
-    }
-
-    static rollAudio() {
-        let audio = new Audio("audio_folder/roll_sound_effect.mp3");
-        return audio.play();
-    }
-
-    static hitAudio() {
-        let audio = new Audio("audio_folder/hit_sound_effect.mp3");
-        return audio.play();
-    }
-
-    static collectAudio() {
-        let audio = new Audio("audio_folder/collect_sound_effect.mp3");
-        return audio.play();
     }
 }
 
@@ -546,7 +546,7 @@ class ScoreForm extends React.Component {
 function HighScore({ name, number }) {
     return (
         <div className="userInfoContainer">
-            <p className="userName">{name}</p>
+            <p className="userName">{name} -</p>
             <p className="userScore">{number}</p>
         </div>
     );
