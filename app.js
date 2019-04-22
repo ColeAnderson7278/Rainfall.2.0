@@ -1,5 +1,11 @@
 const HEIGHT = 300,
     WIDTH = 500,
+    RAIN_WIDTH = 7,
+    RAIN_HEIGHT = 16,
+    RAIN_FALL_DISTANCE = 5,
+    POWER_UP_WIDTH = 24,
+    POWER_UP_HEIGHT = 24,
+    POWER_UP_FALL_DISTANCE = 3,
     MOVEMENT_DISTANCE = 8,
     SLIDE_DISTANCE = 40,
     USER_HEIGHT = 28,
@@ -78,7 +84,13 @@ class App extends React.Component {
                         <div style={userAreaStyle} id="userArea">
                             <Controls />
                             {this.state.rainDrops.map((drop, key) => (
-                                <RainDrop key={key} x={drop.x} y={drop.y} />
+                                <RainDrop
+                                    key={key}
+                                    x={drop.x}
+                                    y={drop.y}
+                                    width={RAIN_WIDTH}
+                                    height={RAIN_HEIGHT}
+                                />
                             ))}
                             <PowerUpDisplay
                                 userHealthAmount={this.state.userHealthAmount}
@@ -89,6 +101,8 @@ class App extends React.Component {
                                     key={key}
                                     x={powerUp.x}
                                     y={powerUp.y}
+                                    height={POWER_UP_HEIGHT}
+                                    width={POWER_UP_WIDTH}
                                 />
                             ))}
                             <User
@@ -234,8 +248,8 @@ class App extends React.Component {
         var updatedDrops = [];
         for (var drop of this.state.rainDrops) {
             updatedDrops.push({
-                x: (drop.x += drop.x > this.state.user.locationX + 10 ? -1 : 1),
-                y: (drop.y += 5)
+                x: (drop.x += drop.x > this.state.user.locationX + 6 ? -1 : 1),
+                y: (drop.y += RAIN_FALL_DISTANCE)
             });
         }
         this.setState({
@@ -248,7 +262,7 @@ class App extends React.Component {
         for (var powerUp of this.state.powerUps) {
             updatedPowerUps.push({
                 x: powerUp.x,
-                y: (powerUp.y += 3)
+                y: (powerUp.y += POWER_UP_FALL_DISTANCE)
             });
         }
         this.setState({
@@ -265,9 +279,9 @@ class App extends React.Component {
 
     didDropHit(x, y) {
         if (
-            x + 7 >= this.state.user.locationX &&
+            x + RAIN_WIDTH >= this.state.user.locationX &&
             x <= this.state.user.locationX + USER_WIDTH &&
-            y >= HEIGHT - USER_HEIGHT - 16
+            y >= HEIGHT - USER_HEIGHT - RAIN_HEIGHT
         ) {
             return true;
         } else {
@@ -301,9 +315,9 @@ class App extends React.Component {
 
     didPowerUpHit(x, y) {
         if (
-            x + 24 >= this.state.user.locationX &&
+            x + POWER_UP_HEIGHT >= this.state.user.locationX &&
             x <= this.state.user.locationX + USER_WIDTH &&
-            y >= HEIGHT - USER_HEIGHT - 24
+            y >= HEIGHT - USER_HEIGHT - POWER_UP_HEIGHT
         ) {
             return true;
         } else {
@@ -337,7 +351,7 @@ class App extends React.Component {
     generateRainDrop() {
         this.setState({
             rainDrops: _.concat(this.state.rainDrops, {
-                x: Math.random() * (WIDTH - 16) + 16,
+                x: Math.random() * (WIDTH - RAIN_HEIGHT) + RAIN_HEIGHT,
                 y: 0
             })
         });
@@ -346,7 +360,7 @@ class App extends React.Component {
     generatePowerUp() {
         this.setState({
             powerUps: _.concat(this.state.powerUps, {
-                x: Math.random() * (WIDTH - 16) + 16,
+                x: Math.random() * (WIDTH - POWER_UP_HEIGHT) + POWER_UP_HEIGHT,
                 y: 0
             })
         });
@@ -354,14 +368,16 @@ class App extends React.Component {
 
     checkRainDrops() {
         this.setState({
-            rainDrops: this.state.rainDrops.filter(drop => drop.y < HEIGHT - 16)
+            rainDrops: this.state.rainDrops.filter(
+                drop => drop.y < HEIGHT - RAIN_HEIGHT
+            )
         });
     }
 
     checkPowerUps() {
         this.setState({
             powerUps: this.state.powerUps.filter(
-                powerUp => powerUp.y < HEIGHT - 24
+                powerUp => powerUp.y < HEIGHT - POWER_UP_HEIGHT
             )
         });
     }
@@ -398,6 +414,55 @@ class App extends React.Component {
     resetTotalState() {
         this.setState(START_STATE);
         this.getHighScores();
+    }
+}
+
+class ScoreForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit(event) {
+        fetch("https://rainfall-backend.herokuapp.com/new-score", {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8"
+            },
+            body: JSON.stringify({
+                name: this.input.value,
+                number: this.props.userScore
+            })
+        }).then(() => this.props.onSubmit());
+        event.preventDefault();
+    }
+
+    render() {
+        if (this.props.isGameOver && !this.props.isFormSubmitted) {
+            return (
+                <form id="scoreForm" onSubmit={this.handleSubmit}>
+                    <label>
+                        <input
+                            required
+                            id="playerNameInput"
+                            placeholder="Enter name then submit or reset the game"
+                            minLength="1"
+                            maxLength="10"
+                            type="text"
+                            ref={input => (this.input = input)}
+                        />
+                    </label>
+                    <input
+                        id="scoreFormSubmitBtn"
+                        type="submit"
+                        value="Submit"
+                    />
+                </form>
+            );
+        } else {
+            return <div />;
+        }
     }
 }
 
@@ -473,8 +538,13 @@ function User({ userHeight, userWidth, locationX, direction, isRolling }) {
     }
 }
 
-function RainDrop({ x, y }) {
-    return <div style={{ left: x, top: y }} className="rainDrop" />;
+function RainDrop({ x, y, width, height }) {
+    return (
+        <div
+            style={{ left: x, top: y, width: width, height: height }}
+            className="rainDrop"
+        />
+    );
 }
 
 function Modal({ isGameOver }) {
@@ -491,55 +561,6 @@ function Modal({ isGameOver }) {
                 </div>
             </div>
         );
-    }
-}
-
-class ScoreForm extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleSubmit(event) {
-        fetch("https://rainfall-backend.herokuapp.com/new-score", {
-            method: "POST",
-            mode: "cors",
-            headers: {
-                "Content-Type": "application/json;charset=utf-8"
-            },
-            body: JSON.stringify({
-                name: this.input.value,
-                number: this.props.userScore
-            })
-        }).then(() => this.props.onSubmit());
-        event.preventDefault();
-    }
-
-    render() {
-        if (this.props.isGameOver && !this.props.isFormSubmitted) {
-            return (
-                <form id="scoreForm" onSubmit={this.handleSubmit}>
-                    <label>
-                        <input
-                            required
-                            id="playerNameInput"
-                            placeholder="Enter name then submit or reset the game"
-                            minLength="1"
-                            maxLength="10"
-                            type="text"
-                            ref={input => (this.input = input)}
-                        />
-                    </label>
-                    <input
-                        id="scoreFormSubmitBtn"
-                        type="submit"
-                        value="Submit"
-                    />
-                </form>
-            );
-        } else {
-            return <div />;
-        }
     }
 }
 
@@ -588,9 +609,12 @@ function Controls() {
     );
 }
 
-function PowerUp({ x, y }) {
+function PowerUp({ x, y, height, width }) {
     return (
-        <div style={{ left: x, top: y }} className="powerUp">
+        <div
+            style={{ left: x, top: y, height: height, width: width }}
+            className="powerUp"
+        >
             <div class="bar horizontal" />
             <div class="bar vertical" />
         </div>
