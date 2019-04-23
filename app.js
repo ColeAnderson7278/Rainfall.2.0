@@ -22,6 +22,7 @@ const START_STATE = {
     healthPacks: [],
     userScore: 0,
     highScores: [],
+    rainfallSpeed: 250,
     isRolling: false,
     userHealthAmount: 0,
     deathAudioRan: false
@@ -33,9 +34,12 @@ class App extends React.Component {
         this.divRef = React.createRef();
         this.state = START_STATE;
         this.dropTick = setInterval(() => this.tick(), 30);
-        this.dropRainTick = setInterval(() => this.generateRainTick(), 300);
+        this.dropRainTick = setInterval(
+            () => this.generateRainTick(),
+            this.state.rainfallSpeed
+        );
         this.dropHealthPackTick = setInterval(
-            () => this.generateHealthPackTick(),
+            () => this.generateHealthPacksTick(),
             12500
         );
     }
@@ -619,8 +623,8 @@ function HealthPack({ x, y, height, width }) {
             style={{ left: x, top: y, height: height, width: width }}
             className="healthPack"
         >
-            <div class="bar horizontal" />
-            <div class="bar vertical" />
+            <div className="bar horizontal" />
+            <div className="bar vertical" />
         </div>
     );
 }
@@ -628,7 +632,7 @@ function HealthPack({ x, y, height, width }) {
 function HealthPackDisplay({ userHealthAmount }) {
     return (
         <div id="healthPackDisplayContainer">
-            <i id="heartIcon" class="fas fa-heart" />
+            <i id="heartIcon" className="fas fa-heart" />
             <p id="userHealthIndicator">x{userHealthAmount}</p>
         </div>
     );
