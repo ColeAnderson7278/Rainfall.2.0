@@ -6,6 +6,7 @@
 
 #appContainer p,
 #gameModal p {
+    -webkit-touch-callout: none;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
@@ -164,13 +165,6 @@
     -webkit-animation-duration: 0.8s;
     animation-name: drop;
     animation-duration: 0.8s;
-}
-
-#gameModal p {
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 }
 
 .curtain {

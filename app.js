@@ -1,21 +1,29 @@
-const HEIGHT = 300,
-    WIDTH = 500,
-    RAIN_WIDTH = 7,
-    RAIN_HEIGHT = 16,
-    RAIN_FALL_DISTANCE = 5,
-    HEALTH_PACK_WIDTH = 24,
-    HEALTH_PACK_HEIGHT = 24,
-    HEALTH_PACK_FALL_DISTANCE = 3,
-    MOVEMENT_DISTANCE = 8,
-    SLIDE_DISTANCE = 40,
-    USER_HEIGHT = 28,
-    USER_WIDTH = 28;
+const PLAY_AREA = {
+        HEIGHT: 300,
+        WIDTH: 500
+    },
+    RAIN = {
+        WIDTH: 7,
+        HEIGHT: 16,
+        FALL_DISTANCE: 5
+    },
+    HEALTH_PACK = {
+        WIDTH: 24,
+        HEIGHT: 24,
+        FALL_DISTANCE: 3
+    },
+    USER = {
+        HEIGHT: 28,
+        WIDTH: 28,
+        MOVEMENT_DISTANCE: 8,
+        SLIDE_DISTANCE: 40
+    };
 
 const START_STATE = {
     gameOver: false,
     formSubmitted: false,
     user: {
-        locationX: 250 - USER_WIDTH / 2,
+        locationX: 250 - USER.WIDTH / 2,
         direction: "left"
     },
     rainDrops: [],
@@ -62,11 +70,11 @@ class App extends React.Component {
 
     render() {
         var userAreaStyle = {
-            width: WIDTH + "px",
-            height: HEIGHT + "px"
+            width: PLAY_AREA.WIDTH + "px",
+            height: PLAY_AREA.HEIGHT + "px"
         };
         var floorStyle = {
-            width: WIDTH + "px"
+            width: PLAY_AREA.WIDTH + "px"
         };
         return (
             <div
@@ -92,8 +100,8 @@ class App extends React.Component {
                                     key={key}
                                     x={drop.x}
                                     y={drop.y}
-                                    width={RAIN_WIDTH}
-                                    height={RAIN_HEIGHT}
+                                    width={RAIN.WIDTH}
+                                    height={RAIN.HEIGHT}
                                 />
                             ))}
                             <HealthPackDisplay
@@ -105,14 +113,14 @@ class App extends React.Component {
                                     key={key}
                                     x={health.x}
                                     y={health.y}
-                                    height={HEALTH_PACK_HEIGHT}
-                                    width={HEALTH_PACK_WIDTH}
+                                    height={HEALTH_PACK.HEIGHT}
+                                    width={HEALTH_PACK.WIDTH}
                                 />
                             ))}
                             <User
                                 locationX={this.state.user.locationX}
-                                userHeight={USER_HEIGHT}
-                                userWidth={USER_WIDTH}
+                                userHeight={USER.HEIGHT}
+                                userWidth={USER.WIDTH}
                                 direction={this.state.user.direction}
                                 isRolling={this.state.isRolling}
                             />
@@ -153,10 +161,11 @@ class App extends React.Component {
         if (!this.state.gameOver) {
             if (event.keyCode == 37) {
                 this.state.user.direction = "left";
-                if (this.state.user.locationX >= MOVEMENT_DISTANCE) {
+                if (this.state.user.locationX >= USER.MOVEMENT_DISTANCE) {
                     this.setState({
                         user: {
-                            locationX: (this.state.user.locationX -= MOVEMENT_DISTANCE),
+                            locationX: (this.state.user.locationX -=
+                                USER.MOVEMENT_DISTANCE),
                             direction: "left"
                         }
                     });
@@ -172,18 +181,19 @@ class App extends React.Component {
                 this.state.user.direction = "right";
                 if (
                     this.state.user.locationX <=
-                    WIDTH - USER_WIDTH - MOVEMENT_DISTANCE
+                    PLAY_AREA.WIDTH - USER.WIDTH - USER.MOVEMENT_DISTANCE
                 ) {
                     this.setState({
                         user: {
-                            locationX: (this.state.user.locationX += MOVEMENT_DISTANCE),
+                            locationX: (this.state.user.locationX +=
+                                USER.MOVEMENT_DISTANCE),
                             direction: "right"
                         }
                     });
                 } else {
                     this.setState({
                         user: {
-                            locationX: WIDTH - USER_WIDTH,
+                            locationX: PLAY_AREA.WIDTH - USER.WIDTH,
                             direction: "right"
                         }
                     });
@@ -198,12 +208,13 @@ class App extends React.Component {
                 if (this.state.user.direction == "left") {
                     if (
                         this.state.user.locationX <=
-                        WIDTH - USER_WIDTH - SLIDE_DISTANCE
+                        PLAY_AREA.WIDTH - USER.WIDTH - USER.SLIDE_DISTANCE
                     ) {
                         AudioPlayer.rollAudio();
                         this.setState({
                             user: {
-                                locationX: (this.state.user.locationX += SLIDE_DISTANCE),
+                                locationX: (this.state.user.locationX +=
+                                    USER.SLIDE_DISTANCE),
                                 direction: "left"
                             },
                             isRolling: true
@@ -212,18 +223,19 @@ class App extends React.Component {
                         AudioPlayer.rollAudio();
                         this.setState({
                             user: {
-                                locationX: WIDTH - USER_WIDTH,
+                                locationX: PLAY_AREA.WIDTH - USER.WIDTH,
                                 direction: "left"
                             },
                             isRolling: true
                         });
                     }
                 } else if (this.state.user.direction == "right") {
-                    if (this.state.user.locationX >= SLIDE_DISTANCE) {
+                    if (this.state.user.locationX >= USER.SLIDE_DISTANCE) {
                         AudioPlayer.rollAudio();
                         this.setState({
                             user: {
-                                locationX: (this.state.user.locationX -= SLIDE_DISTANCE),
+                                locationX: (this.state.user.locationX -=
+                                    USER.SLIDE_DISTANCE),
                                 direction: "right"
                             },
                             isRolling: true
@@ -255,7 +267,7 @@ class App extends React.Component {
         for (var drop of this.state.rainDrops) {
             updatedDrops.push({
                 x: (drop.x += drop.x > this.state.user.locationX + 6 ? -1 : 1),
-                y: (drop.y += RAIN_FALL_DISTANCE)
+                y: (drop.y += RAIN.FALL_DISTANCE)
             });
         }
         this.setState({
@@ -268,7 +280,7 @@ class App extends React.Component {
         for (var healthPack of this.state.healthPacks) {
             updatedHealthPacks.push({
                 x: healthPack.x,
-                y: (healthPack.y += HEALTH_PACK_FALL_DISTANCE)
+                y: (healthPack.y += HEALTH_PACK.FALL_DISTANCE)
             });
         }
         this.setState({
@@ -285,9 +297,9 @@ class App extends React.Component {
 
     didDropHit(x, y) {
         if (
-            x + RAIN_WIDTH >= this.state.user.locationX &&
-            x <= this.state.user.locationX + USER_WIDTH &&
-            y >= HEIGHT - USER_HEIGHT - RAIN_HEIGHT
+            x + RAIN.WIDTH >= this.state.user.locationX &&
+            x <= this.state.user.locationX + USER.WIDTH &&
+            y >= PLAY_AREA.HEIGHT - USER.HEIGHT - RAIN.HEIGHT
         ) {
             return true;
         } else {
@@ -321,9 +333,9 @@ class App extends React.Component {
 
     didHealthPackHit(x, y) {
         if (
-            x + HEALTH_PACK_HEIGHT >= this.state.user.locationX &&
-            x <= this.state.user.locationX + USER_WIDTH &&
-            y >= HEIGHT - USER_HEIGHT - HEALTH_PACK_HEIGHT
+            x + HEALTH_PACK.HEIGHT >= this.state.user.locationX &&
+            x <= this.state.user.locationX + USER.WIDTH &&
+            y >= PLAY_AREA.HEIGHT - USER.HEIGHT - HEALTH_PACK.HEIGHT
         ) {
             return true;
         } else {
@@ -359,7 +371,9 @@ class App extends React.Component {
     generateRainDrop() {
         this.setState({
             rainDrops: _.concat(this.state.rainDrops, {
-                x: Math.random() * (WIDTH - RAIN_HEIGHT) + RAIN_HEIGHT,
+                x:
+                    Math.random() * (PLAY_AREA.WIDTH - RAIN.HEIGHT) +
+                    RAIN.HEIGHT,
                 y: 0
             })
         });
@@ -369,8 +383,8 @@ class App extends React.Component {
         this.setState({
             healthPacks: _.concat(this.state.healthPacks, {
                 x:
-                    Math.random() * (WIDTH - HEALTH_PACK_HEIGHT) +
-                    HEALTH_PACK_HEIGHT,
+                    Math.random() * (PLAY_AREA.WIDTH - HEALTH_PACK.HEIGHT) +
+                    HEALTH_PACK.HEIGHT,
                 y: 0
             })
         });
@@ -379,7 +393,7 @@ class App extends React.Component {
     checkRainDrops() {
         this.setState({
             rainDrops: this.state.rainDrops.filter(
-                drop => drop.y < HEIGHT - RAIN_HEIGHT
+                drop => drop.y < PLAY_AREA.HEIGHT - RAIN.HEIGHT
             )
         });
     }
@@ -387,7 +401,8 @@ class App extends React.Component {
     checkHealthPacks() {
         this.setState({
             healthPacks: this.state.healthPacks.filter(
-                healthPack => healthPack.y < HEIGHT - HEALTH_PACK_HEIGHT
+                healthPack =>
+                    healthPack.y < PLAY_AREA.HEIGHT - HEALTH_PACK.HEIGHT
             )
         });
     }
