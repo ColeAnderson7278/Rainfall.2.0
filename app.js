@@ -23,7 +23,7 @@ const START_STATE = {
     gameOver: false,
     formSubmitted: false,
     user: {
-        locationX: 250 - USER.WIDTH / 2,
+        locationX: PLAY_AREA.WIDTH / 2 - USER.WIDTH / 2,
         direction: "left"
     },
     rainDrops: [],
@@ -131,7 +131,11 @@ class App extends React.Component {
                             </div>
                         </div>
                         <div style={floorStyle} id="floor">
-                            {Array(18).fill(<div className="floorBoard" />)}
+                            {Array(18)
+                                .fill(null)
+                                .map((_, index) => (
+                                    <div key={index} className="floorBoard" />
+                                ))}
                         </div>
                         <ScoreForm
                             isGameOver={this.state.gameOver}
@@ -578,7 +582,11 @@ function GameOverModal({ isGameOver }) {
     } else {
         return (
             <div id="gameModal">
-                {Array(12).fill(<div className="curtain" />)}
+                {Array(12)
+                    .fill(null)
+                    .map((_, index) => (
+                        <div key={index} className="curtain" />
+                    ))}
                 <p id="modalText">Game Over</p>
                 <div id="modalControlInfo">
                     <i className="fas fa-arrow-up" />
