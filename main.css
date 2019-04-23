@@ -4,7 +4,8 @@
     margin-right: auto;
 }
 
-#appContainer p {
+#appContainer p,
+#gameModal p {
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;

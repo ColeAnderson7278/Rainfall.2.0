@@ -117,7 +117,9 @@ class App extends React.Component {
                                 isRolling={this.state.isRolling}
                             />
                             <div id="modalContainer">
-                                <Modal isGameOver={this.state.gameOver} />
+                                <GameOverModal
+                                    isGameOver={this.state.gameOver}
+                                />
                             </div>
                         </div>
                         <div style={floorStyle} id="floor">
@@ -555,7 +557,7 @@ function RainDrop({ x, y, width, height }) {
     );
 }
 
-function Modal({ isGameOver }) {
+function GameOverModal({ isGameOver }) {
     if (!isGameOver) {
         return <div />;
     } else {
