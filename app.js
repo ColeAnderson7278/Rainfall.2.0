@@ -156,7 +156,8 @@ class App extends React.Component {
     restartGame(event) {
         if (this.state.gameOver) {
             if (event.keyCode == 38) {
-                this.resetTotalState();
+                this.setState(START_STATE);
+                this.getHighScores();
             }
         }
     }
@@ -438,11 +439,6 @@ class App extends React.Component {
                 deathAudioRan: true
             });
         }
-    }
-
-    resetTotalState() {
-        this.setState(START_STATE);
-        this.getHighScores();
     }
 }
 
