@@ -48,7 +48,7 @@ class App extends React.Component {
         );
         this.dropHealthPackTick = setInterval(
             () => this.generateHealthPacksTick(),
-            1250
+            12500
         );
     }
 
