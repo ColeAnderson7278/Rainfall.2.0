@@ -60,12 +60,14 @@ class App extends React.Component {
     getHighScores() {
         fetch("https://rainfall-backend.herokuapp.com/high-scores")
             .then(res => res.json())
-            .then(highScores => this.setState({ highScores: highScores }))
+            .then(highScores =>
+                this.setState(() => ({ highScores: highScores }))
+            )
             .catch(error => console.error("Error:", error));
     }
 
     scoreSubmitted() {
-        this.setState({ formSubmitted: true });
+        this.setState(() => ({ formSubmitted: true }));
     }
 
     render() {
@@ -163,106 +165,85 @@ class App extends React.Component {
     }
 
     movePlayer(event) {
+        var user = {
+            locationX: this.state.user.locationX,
+            direction: this.state.user.direction
+        };
         if (!this.state.gameOver) {
             if (event.keyCode == 37) {
-                this.state.user.direction = "left";
                 if (this.state.user.locationX >= USER.MOVEMENT_DISTANCE) {
-                    this.setState({
-                        user: {
-                            locationX: (this.state.user.locationX -=
-                                USER.MOVEMENT_DISTANCE),
-                            direction: "left"
-                        }
-                    });
+                    user.locationX = this.state.user.locationX -=
+                        USER.MOVEMENT_DISTANCE;
                 } else {
-                    this.setState({
-                        user: {
-                            locationX: 0,
-                            direction: "left"
-                        }
-                    });
+                    user.locationX = 0;
                 }
+                user.direction = "left";
             } else if (event.keyCode == 39) {
-                this.state.user.direction = "right";
                 if (
                     this.state.user.locationX <=
                     PLAY_AREA.WIDTH - USER.WIDTH - USER.MOVEMENT_DISTANCE
                 ) {
-                    this.setState({
-                        user: {
-                            locationX: (this.state.user.locationX +=
-                                USER.MOVEMENT_DISTANCE),
-                            direction: "right"
-                        }
-                    });
+                    user.locationX = this.state.user.locationX +=
+                        USER.MOVEMENT_DISTANCE;
                 } else {
-                    this.setState({
-                        user: {
-                            locationX: PLAY_AREA.WIDTH - USER.WIDTH,
-                            direction: "right"
-                        }
-                    });
+                    user.locationX = PLAY_AREA.WIDTH - USER.WIDTH;
                 }
+                user.direction = "right";
             }
+            this.setState(() => ({
+                user: { locationX: user.locationX, direction: user.direction }
+            }));
         }
     }
 
     rollPlayer(event) {
+        var user = {
+            locationX: this.state.user.locationX,
+            direction: this.state.user.direction,
+            isRolling: this.state.isRolling
+        };
         if (!this.state.gameOver) {
             if (event.keyCode == 40) {
+                AudioPlayer.rollAudio();
                 if (this.state.user.direction == "left") {
+                    user.direction = "left";
+                    user.isRolling = true;
                     if (
                         this.state.user.locationX <=
                         PLAY_AREA.WIDTH - USER.WIDTH - USER.SLIDE_DISTANCE
                     ) {
-                        AudioPlayer.rollAudio();
-                        this.setState({
-                            user: {
-                                locationX: (this.state.user.locationX +=
-                                    USER.SLIDE_DISTANCE),
-                                direction: "left"
-                            },
-                            isRolling: true
-                        });
+                        user.locationX = this.state.user.locationX +=
+                            USER.SLIDE_DISTANCE;
                     } else {
-                        AudioPlayer.rollAudio();
-                        this.setState({
-                            user: {
-                                locationX: PLAY_AREA.WIDTH - USER.WIDTH,
-                                direction: "left"
-                            },
-                            isRolling: true
-                        });
+                        user.locationX = PLAY_AREA.WIDTH - USER.WIDTH;
                     }
                 } else if (this.state.user.direction == "right") {
+                    user.direction = "right";
+                    user.isRolling = true;
                     if (this.state.user.locationX >= USER.SLIDE_DISTANCE) {
-                        AudioPlayer.rollAudio();
-                        this.setState({
-                            user: {
-                                locationX: (this.state.user.locationX -=
-                                    USER.SLIDE_DISTANCE),
-                                direction: "right"
-                            },
-                            isRolling: true
-                        });
+                        user.locationX = this.state.user.locationX -=
+                            USER.SLIDE_DISTANCE;
                     } else {
-                        AudioPlayer.rollAudio();
-                        this.setState({
-                            user: { locationX: 0, direction: "right" },
-                            isRolling: true
-                        });
+                        user.locationX = 0;
                     }
                 }
             }
+            this.setState(() => ({
+                user: {
+                    locationX: user.locationX,
+                    direction: user.direction
+                },
+                isRolling: user.isRolling
+            }));
         }
     }
 
     stopRoll(event) {
         if (event.keyCode == 40) {
             setTimeout(() => {
-                this.setState({
+                this.setState(() => ({
                     isRolling: false
-                });
+                }));
             }, 200);
         }
     }
@@ -275,9 +256,9 @@ class App extends React.Component {
                 y: (drop.y += RAIN.FALL_DISTANCE)
             });
         }
-        this.setState({
+        this.setState(() => ({
             rainDrops: updatedDrops
-        });
+        }));
     }
 
     dropHealthPack() {
@@ -288,16 +269,16 @@ class App extends React.Component {
                 y: (healthPack.y += HEALTH_PACK.FALL_DISTANCE)
             });
         }
-        this.setState({
+        this.setState(() => ({
             healthPacks: updatedHealthPacks
-        });
+        }));
     }
 
     addPoints() {
         var originalScore = this.state.userScore;
-        this.setState({
+        this.setState(() => ({
             userScore: originalScore + 5
-        });
+        }));
     }
 
     didDropHit(x, y) {
@@ -318,34 +299,30 @@ class App extends React.Component {
                 this.didDropHit(drop.x, drop.y) &&
                 this.state.userHealthAmount <= 0
             ) {
-                this.setState({
+                this.setState(() => ({
                     gameOver: true
-                });
+                }));
             } else if (
                 this.didDropHit(drop.x, drop.y) &&
                 this.state.userHealthAmount > 0
             ) {
                 AudioPlayer.hitAudio();
-                this.setState({
-                    rainDrops: this.state.rainDrops.filter(
+                this.setState(state => ({
+                    rainDrops: state.rainDrops.filter(
                         drop => !this.didDropHit(drop.x, drop.y)
                     ),
-                    userHealthAmount: this.state.userHealthAmount - 1
-                });
+                    userHealthAmount: state.userHealthAmount - 1
+                }));
             }
         }
     }
 
     didHealthPackHit(x, y) {
-        if (
+        return (
             x + HEALTH_PACK.HEIGHT >= this.state.user.locationX &&
             x <= this.state.user.locationX + USER.WIDTH &&
             y >= PLAY_AREA.HEIGHT - USER.HEIGHT - HEALTH_PACK.HEIGHT
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        );
     }
 
     checkForAcquiredHealthPack() {
@@ -355,61 +332,61 @@ class App extends React.Component {
                 this.state.userHealthAmount < 3
             ) {
                 AudioPlayer.collectAudio();
-                this.setState({
+                this.setState(() => ({
                     healthPacks: this.state.healthPacks.filter(
                         healthPack =>
                             !this.didHealthPackHit(healthPack.x, healthPack.y)
                     ),
                     userHealthAmount: this.state.userHealthAmount + 1
-                });
+                }));
             } else {
-                this.setState({
+                this.setState(() => ({
                     healthPacks: this.state.healthPacks.filter(
                         healthPack =>
                             !this.didHealthPackHit(healthPack.x, healthPack.y)
                     )
-                });
+                }));
             }
         }
     }
 
     generateRainDrop() {
-        this.setState({
+        this.setState(() => ({
             rainDrops: _.concat(this.state.rainDrops, {
                 x:
                     Math.random() * (PLAY_AREA.WIDTH - RAIN.HEIGHT) +
                     RAIN.HEIGHT,
                 y: 0
             })
-        });
+        }));
     }
 
     generateHealthPack() {
-        this.setState({
+        this.setState(() => ({
             healthPacks: _.concat(this.state.healthPacks, {
                 x:
                     Math.random() * (PLAY_AREA.WIDTH - HEALTH_PACK.HEIGHT) +
                     HEALTH_PACK.HEIGHT,
                 y: 0
             })
-        });
+        }));
     }
 
     checkRainDrops() {
-        this.setState({
+        this.setState(() => ({
             rainDrops: this.state.rainDrops.filter(
                 drop => drop.y < PLAY_AREA.HEIGHT - RAIN.HEIGHT
             )
-        });
+        }));
     }
 
     checkHealthPacks() {
-        this.setState({
+        this.setState(() => ({
             healthPacks: this.state.healthPacks.filter(
                 healthPack =>
                     healthPack.y < PLAY_AREA.HEIGHT - HEALTH_PACK.HEIGHT
             )
-        });
+        }));
     }
 
     generateRainTick() {
@@ -456,7 +433,7 @@ class ScoreForm extends React.Component {
                 "Content-Type": "application/json;charset=utf-8"
             },
             body: JSON.stringify({
-                name: this.input.value,
+                name: event.target.elements.name.value,
                 number: this.props.userScore
             })
         }).then(() => this.props.onSubmit());
@@ -475,7 +452,7 @@ class ScoreForm extends React.Component {
                             minLength="1"
                             maxLength="10"
                             type="text"
-                            ref={input => (this.input = input)}
+                            name="name"
                         />
                     </label>
                     <input
@@ -491,27 +468,27 @@ class ScoreForm extends React.Component {
     }
 }
 
-class AudioPlayer extends React.Component {
-    static charDeathAudio() {
+const AudioPlayer = {
+    charDeathAudio() {
         let audio = new Audio("audio_folder/char_death_sound_effect.mp3");
         return audio.play();
-    }
+    },
 
-    static rollAudio() {
+    rollAudio() {
         let audio = new Audio("audio_folder/roll_sound_effect.mp3");
         return audio.play();
-    }
+    },
 
-    static hitAudio() {
+    hitAudio() {
         let audio = new Audio("audio_folder/hit_sound_effect.mp3");
         return audio.play();
-    }
+    },
 
-    static collectAudio() {
+    collectAudio() {
         let audio = new Audio("audio_folder/collect_sound_effect.mp3");
         return audio.play();
     }
-}
+};
 
 function User({ userHeight, userWidth, locationX, direction, isRolling }) {
     if (!isRolling) {
@@ -596,7 +573,7 @@ function GameOverModal({ isGameOver }) {
 function HighScore({ name, number }) {
     return (
         <div className="userInfoContainer">
-            <p className="userName">{name} -</p>
+            <p className="userName">{name}</p>
             <p className="userScore">{number}</p>
         </div>
     );
