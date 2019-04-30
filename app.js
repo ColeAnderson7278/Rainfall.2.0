@@ -48,7 +48,7 @@ class App extends React.Component {
         );
         this.dropHealthPackTick = setInterval(
             () => this.generateHealthPacksTick(),
-            12500
+            1250
         );
     }
 
@@ -326,27 +326,22 @@ class App extends React.Component {
     }
 
     checkForAcquiredHealthPack() {
+        var userHealth = this.state.userHealthAmount;
         for (var healthPack of this.state.healthPacks) {
             if (
                 this.didHealthPackHit(healthPack.x, healthPack.y) &&
                 this.state.userHealthAmount < 3
             ) {
                 AudioPlayer.collectAudio();
-                this.setState(() => ({
-                    healthPacks: this.state.healthPacks.filter(
-                        healthPack =>
-                            !this.didHealthPackHit(healthPack.x, healthPack.y)
-                    ),
-                    userHealthAmount: this.state.userHealthAmount + 1
-                }));
-            } else {
-                this.setState(() => ({
-                    healthPacks: this.state.healthPacks.filter(
-                        healthPack =>
-                            !this.didHealthPackHit(healthPack.x, healthPack.y)
-                    )
-                }));
+                userHealth += 1;
             }
+            this.setState(state => ({
+                healthPacks: state.healthPacks.filter(
+                    healthPack =>
+                        !this.didHealthPackHit(healthPack.x, healthPack.y)
+                ),
+                userHealthAmount: userHealth
+            }));
         }
     }
 
