@@ -294,27 +294,29 @@ class App extends React.Component {
     }
 
     checkForGameOver() {
+        var gameOver = this.state.isGameOver;
+        var drops = this.state.rainDrops;
+        var userHealth = this.state.userHealthAmount;
         for (var drop of this.state.rainDrops) {
             if (
                 this.didDropHit(drop.x, drop.y) &&
                 this.state.userHealthAmount <= 0
             ) {
-                this.setState(() => ({
-                    gameOver: true
-                }));
+                gameOver = true;
             } else if (
                 this.didDropHit(drop.x, drop.y) &&
                 this.state.userHealthAmount > 0
             ) {
                 AudioPlayer.hitAudio();
-                this.setState(state => ({
-                    rainDrops: state.rainDrops.filter(
-                        drop => !this.didDropHit(drop.x, drop.y)
-                    ),
-                    userHealthAmount: state.userHealthAmount - 1
-                }));
+                drops = drops.filter(drop => !this.didDropHit(drop.x, drop.y));
+                userHealth -= 1;
             }
         }
+        this.setState(() => ({
+            gameOver: gameOver,
+            rainDrops: drops,
+            userHealthAmount: userHealth
+        }));
     }
 
     didHealthPackHit(x, y) {
